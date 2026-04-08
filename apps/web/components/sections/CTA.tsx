@@ -1,4 +1,5 @@
 import { ArrowRight, Sparkles } from "lucide-react";
+import { APP_URL } from "@/lib/urls";
 
 export default function CTA() {
   return (
@@ -33,7 +34,7 @@ export default function CTA() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="https://app.vendflow.com.br/cadastro"
+              href={`${APP_URL}/cadastro`}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-base bg-gradient-brand text-white shadow-xl shadow-primary-500/40 hover:shadow-primary-500/60 hover:scale-105 transition-all"
             >
               Criar minha loja grátis

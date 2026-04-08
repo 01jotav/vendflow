@@ -1,4 +1,5 @@
 import { UserPlus, Store, TrendingUp } from "lucide-react";
+import { APP_URL } from "@/lib/urls";
 
 const steps = [
   {
@@ -92,7 +93,7 @@ export default function HowItWorks() {
         {/* CTA central */}
         <div className="text-center mt-14">
           <a
-            href="https://app.vendflow.com.br/cadastro"
+            href={`${APP_URL}/cadastro`}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base bg-gradient-brand text-white shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-105 transition-all"
           >
             Criar minha loja agora

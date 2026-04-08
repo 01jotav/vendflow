@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Zap } from "lucide-react";
 import clsx from "clsx";
+import { APP_URL } from "@/lib/urls";
 
 const navLinks = [
   { label: "Funcionalidades", href: "#features" },
@@ -66,7 +67,7 @@ export default function Header() {
           {/* CTAs Desktop */}
           <div className="hidden lg:flex items-center gap-3">
             <a
-              href="https://app.vendflow.com.br/login"
+              href={`${APP_URL}/login`}
               className={clsx(
                 "text-sm font-medium px-4 py-2 rounded-lg transition-colors",
                 isScrolled
@@ -77,7 +78,7 @@ export default function Header() {
               Entrar
             </a>
             <a
-              href="https://app.vendflow.com.br/cadastro"
+              href={`${APP_URL}/cadastro`}
               className="text-sm font-semibold px-5 py-2.5 rounded-xl bg-gradient-brand text-white shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-105 transition-all"
             >
               Começar grátis
@@ -114,13 +115,13 @@ export default function Header() {
             </nav>
             <div className="flex flex-col gap-2 pt-3 border-t border-gray-100">
               <a
-                href="https://app.vendflow.com.br/login"
+                href={`${APP_URL}/login`}
                 className="text-center text-sm font-medium text-gray-700 py-2.5 px-4 rounded-xl border border-gray-200 hover:border-primary-300 hover:text-primary-600 transition-colors"
               >
                 Entrar
               </a>
               <a
-                href="https://app.vendflow.com.br/cadastro"
+                href={`${APP_URL}/cadastro`}
                 className="text-center text-sm font-semibold py-2.5 px-4 rounded-xl bg-gradient-brand text-white shadow-lg"
               >
                 Começar grátis

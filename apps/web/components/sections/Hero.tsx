@@ -1,4 +1,5 @@
 import { ArrowRight, Star, ShoppingBag, Sparkles } from "lucide-react";
+import { APP_URL } from "@/lib/urls";
 
 const stats = [
   { value: "2.400+", label: "Lojistas ativos" },
@@ -57,7 +58,7 @@ export default function Hero() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-10">
               <a
-                href="https://app.vendflow.com.br/cadastro"
+                href={`${APP_URL}/cadastro`}
                 className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-semibold text-base bg-gradient-brand text-white shadow-xl shadow-primary-500/40 hover:shadow-primary-500/60 hover:scale-105 transition-all"
               >
                 Começar grátis agora

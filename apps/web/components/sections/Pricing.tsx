@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check, Zap } from "lucide-react";
 import clsx from "clsx";
+import { APP_URL } from "@/lib/urls";
 
 const plans = [
   {
@@ -194,7 +195,7 @@ export default function Pricing() {
                 href={
                   plan.name === "Premium"
                     ? "#"
-                    : "https://app.vendflow.com.br/cadastro"
+                    : `${APP_URL}/cadastro`
                 }
                 className={clsx(
                   "block text-center py-3 rounded-xl text-sm font-bold mb-6 transition-all",
