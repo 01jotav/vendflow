@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "@vendflow/database";
+import { db, PrismaAdapter } from "@vendflow/database";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
