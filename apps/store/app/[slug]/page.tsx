@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ShoppingBag, Truck, Shield, RefreshCw } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
@@ -13,18 +14,23 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const store = await db.store.findUnique({
-    where: { slug },
-    select: { name: true, description: true, logoUrl: true },
-  });
-  if (!store) return { title: "Loja não encontrada · Vendflow" };
-  return {
-    title: `${store.name} · Vendflow`,
-    description: store.description ?? `Conheça os produtos de ${store.name}`,
-    icons: store.logoUrl ? [{ rel: "icon", url: store.logoUrl }] : [{ rel: "icon", url: "/favicon.ico" }],
-  };
+  try {
+    const store = await db.store.findUnique({
+      where: { slug },
+      select: { name: true, description: true, logoUrl: true },
+    });
+    if (!store) return { title: "Loja não encontrada · Vendflow" };
+    return {
+      title: `${store.name} · Vendflow`,
+      description: store.description ?? `Conheça os produtos de ${store.name}`,
+      icons: store.logoUrl ? [{ rel: "icon", url: store.logoUrl }] : undefined,
+    };
+  } catch {
+    return { title: "Vendflow" };
+  }
 }
 
+// TODO: tornar configurável pelo lojista no painel (regras de frete, segurança, troca)
 const perks = [
   { icon: Truck,     label: "Frete grátis acima de R$ 150" },
   { icon: Shield,    label: "Compra 100% segura" },
@@ -121,8 +127,13 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
                 >
                   <div className="h-36 sm:h-44 bg-gray-100 relative">
                     {product.images[0] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className="object-cover"
+                      />
                     ) : null}
                     {product.stock === 0 && (
                       <div className="absolute inset-0 bg-white/60 flex items-center justify-center">

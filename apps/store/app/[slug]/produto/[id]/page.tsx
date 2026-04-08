@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ShoppingBag, Share2, Truck, Shield, ArrowLeft, Check } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
@@ -13,21 +14,25 @@ export async function generateMetadata({
   params: Promise<{ slug: string; id: string }>;
 }): Promise<Metadata> {
   const { slug, id } = await params;
-  const store = await db.store.findUnique({
-    where: { slug },
-    select: { id: true, name: true, logoUrl: true },
-  });
-  if (!store) return { title: "Loja não encontrada · Vendflow" };
-  const product = await db.product.findFirst({
-    where: { id, storeId: store.id },
-    select: { name: true, description: true },
-  });
-  if (!product) return { title: `${store.name} · Vendflow` };
-  return {
-    title: `${product.name} · ${store.name}`,
-    description: product.description ?? `${product.name} - ${store.name}`,
-    icons: store.logoUrl ? [{ rel: "icon", url: store.logoUrl }] : [{ rel: "icon", url: "/favicon.ico" }],
-  };
+  try {
+    const store = await db.store.findUnique({
+      where: { slug },
+      select: { id: true, name: true, logoUrl: true },
+    });
+    if (!store) return { title: "Loja não encontrada · Vendflow" };
+    const product = await db.product.findFirst({
+      where: { id, storeId: store.id },
+      select: { name: true, description: true },
+    });
+    if (!product) return { title: `${store.name} · Vendflow` };
+    return {
+      title: `${product.name} · ${store.name}`,
+      description: product.description ?? `${product.name} - ${store.name}`,
+      icons: store.logoUrl ? [{ rel: "icon", url: store.logoUrl }] : undefined,
+    };
+  } catch {
+    return { title: "Vendflow" };
+  }
 }
 
 export default async function ProductPage({
@@ -84,8 +89,14 @@ export default async function ProductPage({
             <div className="space-y-3">
               <div className="w-full aspect-square rounded-2xl bg-gray-100 overflow-hidden relative">
                 {product.images[0] ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
                 ) : null}
               </div>
 
@@ -94,11 +105,10 @@ export default async function ProductPage({
                   {product.images.map((img, i) => (
                     <div
                       key={i}
-                      className="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden border-2"
+                      className="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden border-2 relative"
                       style={i === 0 ? { borderColor: store.themeColor } : { borderColor: "transparent" }}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <Image src={img} alt="" fill sizes="80px" className="object-cover" />
                     </div>
                   ))}
                 </div>
@@ -173,10 +183,15 @@ export default async function ProductPage({
                     href={`/${store.slug}/produto/${p.id}`}
                     className="group bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-all overflow-hidden"
                   >
-                    <div className="h-36 bg-gray-100">
+                    <div className="h-36 bg-gray-100 relative">
                       {p.images[0] ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.images[0]} alt={p.name} className="w-full h-full object-cover" />
+                        <Image
+                          src={p.images[0]}
+                          alt={p.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover"
+                        />
                       ) : null}
                     </div>
                     <div className="p-3">
