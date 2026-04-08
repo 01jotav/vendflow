@@ -1,15 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShoppingBag, Search, Menu, X, Instagram } from "lucide-react";
+import { ShoppingBag, Search, Menu, X } from "lucide-react";
 import clsx from "clsx";
-import { store, categories } from "@/lib/mock-store";
+
+export interface StoreHeaderData {
+  slug: string;
+  name: string;
+  themeColor: string;
+  logoInitial: string;
+}
 
 interface StoreHeaderProps {
+  store: StoreHeaderData;
+  categories?: string[];
   cartCount?: number;
 }
 
-export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
+export default function StoreHeader({ store, categories = [], cartCount = 0 }: StoreHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -18,6 +26,8 @@ export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
+
+  const homeHref = `/${store.slug}`;
 
   return (
     <header
@@ -28,8 +38,7 @@ export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="/" className="flex items-center gap-2.5 group">
+          <a href={homeHref} className="flex items-center gap-2.5 group">
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:scale-110 transition-transform"
               style={{ backgroundColor: store.themeColor }}
@@ -39,12 +48,11 @@ export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
             <span className="font-bold text-gray-900 text-lg">{store.name}</span>
           </a>
 
-          {/* Nav desktop */}
           <nav className="hidden md:flex items-center gap-6">
-            {categories.slice(1).map((cat) => (
+            {categories.map((cat) => (
               <a
                 key={cat}
-                href={`/?categoria=${cat.toLowerCase()}`}
+                href={`${homeHref}?categoria=${encodeURIComponent(cat.toLowerCase())}`}
                 className="text-sm text-gray-500 hover:text-gray-900 font-medium transition-colors"
               >
                 {cat}
@@ -52,25 +60,13 @@ export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
             ))}
           </nav>
 
-          {/* Actions */}
           <div className="flex items-center gap-2">
             <button className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors hidden sm:flex">
               <Search className="w-5 h-5" />
             </button>
 
-            {store.instagram && (
-              <a
-                href={`https://instagram.com/${store.instagram.replace("@", "")}`}
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors hidden sm:flex"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-            )}
-
             <a
-              href="/carrinho"
+              href={`${homeHref}/carrinho`}
               className="relative flex items-center gap-2 px-3 py-2 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90"
               style={{ backgroundColor: store.themeColor }}
             >
@@ -93,7 +89,6 @@ export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 bg-white flex flex-col">
           <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -103,13 +98,13 @@ export default function StoreHeader({ cartCount = 0 }: StoreHeaderProps) {
             </button>
           </div>
           <nav className="p-4 flex flex-col gap-1">
-            <a href="/" className="py-3 px-3 rounded-xl font-semibold text-gray-900 hover:bg-gray-50">
+            <a href={homeHref} className="py-3 px-3 rounded-xl font-semibold text-gray-900 hover:bg-gray-50">
               Todos os produtos
             </a>
-            {categories.slice(1).map((cat) => (
+            {categories.map((cat) => (
               <a
                 key={cat}
-                href={`/?categoria=${cat.toLowerCase()}`}
+                href={`${homeHref}?categoria=${encodeURIComponent(cat.toLowerCase())}`}
                 onClick={() => setMobileOpen(false)}
                 className="py-3 px-3 rounded-xl text-gray-600 hover:bg-gray-50 font-medium"
               >

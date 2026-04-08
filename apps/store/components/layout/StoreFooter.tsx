@@ -1,7 +1,11 @@
-import { Instagram, MessageCircle } from "lucide-react";
-import { store } from "@/lib/mock-store";
+export interface StoreFooterData {
+  name: string;
+  description?: string | null;
+  themeColor: string;
+  logoInitial: string;
+}
 
-export default function StoreFooter() {
+export default function StoreFooter({ store }: { store: StoreFooterData }) {
   return (
     <footer className="bg-gray-50 border-t border-gray-100 mt-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
@@ -15,33 +19,8 @@ export default function StoreFooter() {
             </div>
             <div>
               <p className="font-bold text-gray-900 text-sm">{store.name}</p>
-              <p className="text-xs text-gray-400">{store.description}</p>
+              {store.description && <p className="text-xs text-gray-400">{store.description}</p>}
             </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {store.instagram && (
-              <a
-                href={`https://instagram.com/${store.instagram.replace("@", "")}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                <Instagram className="w-4 h-4" />
-                {store.instagram}
-              </a>
-            )}
-            {store.whatsapp && (
-              <a
-                href={`https://wa.me/${store.whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 text-sm text-white px-3 py-1.5 rounded-lg font-medium bg-green-500 hover:bg-green-600 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" />
-                Falar conosco
-              </a>
-            )}
           </div>
         </div>
 
@@ -49,9 +28,9 @@ export default function StoreFooter() {
           <p>© {new Date().getFullYear()} {store.name}. Todos os direitos reservados.</p>
           <p>
             Loja criada com{" "}
-            <a href="https://vendflow.com.br" className="font-semibold hover:underline" style={{ color: store.themeColor }}>
+            <span className="font-semibold" style={{ color: store.themeColor }}>
               Vendflow
-            </a>
+            </span>
           </p>
         </div>
       </div>
