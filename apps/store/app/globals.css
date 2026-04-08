@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; padding: 0; margin: 0; }
+  html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+  body { @apply font-sans text-gray-900 bg-white; }
+}
+
+:root {
+  --store-color: #7c3aed;
+  --store-color-light: #ede9fe;
+}
+
+@layer utilities {
+  .btn-store {
+    background-color: var(--store-color);
+    @apply text-white font-semibold rounded-xl transition-all hover:opacity-90 hover:scale-[1.02];
+  }
+  .text-store { color: var(--store-color); }
+  .bg-store-light { background-color: var(--store-color-light); }
+  .border-store { border-color: var(--store-color); }
+  .ring-store { --tw-ring-color: var(--store-color); }
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 3px; }

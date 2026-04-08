@@ -1,0 +1,148 @@
+// Dados mockados da loja — futuramente virão da API via slug do subdomínio
+
+export const store = {
+  name: "Bella Cosméticos",
+  slug: "bella-cosmeticos",
+  description: "Cosméticos premium para realçar sua beleza natural.",
+  logoInitial: "B",
+  themeColor: "#7c3aed",
+  theme: "MODERN" as const,
+  whatsapp: "5511999990000",
+  instagram: "@bellacosmeticos",
+};
+
+export const categories = ["Todos", "Skincare", "Maquiagem", "Cabelos", "Corpo"];
+
+export const products = [
+  {
+    id: "1",
+    name: "Sérum Facial Vitamina C",
+    slug: "serum-facial-vitamina-c",
+    category: "Skincare",
+    price: 89.9,
+    originalPrice: null,
+    description:
+      "Sérum concentrado com 15% de vitamina C pura. Combate manchas, ilumina e uniformiza o tom da pele. Textura leve, absorção rápida. Uso diário, manhã e noite.",
+    images: ["bg-orange-100", "bg-orange-200", "bg-amber-100"],
+    stock: 23,
+    featured: true,
+    rating: 4.8,
+    reviews: 142,
+    tags: ["iluminador", "anti-manchas", "vitamina c"],
+  },
+  {
+    id: "2",
+    name: "Máscara Hidratante Intensiva",
+    slug: "mascara-hidratante-intensiva",
+    category: "Cabelos",
+    price: 54.9,
+    originalPrice: 69.9,
+    description:
+      "Máscara de hidratação profunda com manteiga de karité e óleos essenciais. Recupera o brilho, elimina o frizz e deixa os fios sedosos por até 7 dias.",
+    images: ["bg-pink-100", "bg-pink-200", "bg-rose-100"],
+    stock: 15,
+    featured: true,
+    rating: 4.9,
+    reviews: 87,
+    tags: ["hidratação", "brilho", "frizz"],
+  },
+  {
+    id: "3",
+    name: "Base Líquida Mate FPS30",
+    slug: "base-liquida-mate-fps30",
+    category: "Maquiagem",
+    price: 79.9,
+    originalPrice: null,
+    description:
+      "Base de longa duração com acabamento matte e proteção solar FPS30. Cobertura média a alta, disponível em 12 tonalidades. Fórmula livre de óleo.",
+    images: ["bg-amber-100", "bg-yellow-100", "bg-amber-200"],
+    stock: 8,
+    featured: true,
+    rating: 4.7,
+    reviews: 203,
+    tags: ["matte", "fps30", "longa duração"],
+  },
+  {
+    id: "4",
+    name: "Protetor Solar FPS 60",
+    slug: "protetor-solar-fps-60",
+    category: "Skincare",
+    price: 67.9,
+    originalPrice: null,
+    description:
+      "Protetor solar facial com FPS60 e toque seco. Protege contra UVA e UVB, não deixa resíduo branco e pode ser usado como base para a maquiagem.",
+    images: ["bg-yellow-100", "bg-lime-100", "bg-yellow-200"],
+    stock: 31,
+    featured: false,
+    rating: 4.6,
+    reviews: 95,
+    tags: ["fps60", "toque seco", "diário"],
+  },
+  {
+    id: "5",
+    name: "Óleo Capilar Reparador",
+    slug: "oleo-capilar-reparador",
+    category: "Cabelos",
+    price: 44.9,
+    originalPrice: 59.9,
+    description:
+      "Óleo finalizador com blend de argan, jojoba e coco. Repara as pontas, adiciona brilho e protege contra o calor de chapinhas e secadores.",
+    images: ["bg-emerald-100", "bg-teal-100", "bg-emerald-200"],
+    stock: 19,
+    featured: false,
+    rating: 4.5,
+    reviews: 61,
+    tags: ["finalizador", "argan", "pontas"],
+  },
+  {
+    id: "6",
+    name: "Blush Natural Rosé",
+    slug: "blush-natural-rose",
+    category: "Maquiagem",
+    price: 39.9,
+    originalPrice: null,
+    description:
+      "Blush em pó com pigmentação suave e acabamento natural. Tom rosé versátil para todos os tons de pele. Dura até 12h sem retoque.",
+    images: ["bg-rose-100", "bg-pink-100", "bg-rose-200"],
+    stock: 12,
+    featured: false,
+    rating: 4.8,
+    reviews: 44,
+    tags: ["blush", "rosé", "natural"],
+  },
+  {
+    id: "7",
+    name: "Esfoliante Corporal Café",
+    slug: "esfoliante-corporal-cafe",
+    category: "Corpo",
+    price: 49.9,
+    originalPrice: 64.9,
+    description:
+      "Esfoliante corporal com grãos de café, açúcar mascavo e óleo de amêndoas. Remove células mortas, melhora a circulação e hidrata profundamente.",
+    images: ["bg-amber-200", "bg-brown-100", "bg-orange-200"],
+    stock: 27,
+    featured: false,
+    rating: 4.9,
+    reviews: 118,
+    tags: ["esfoliante", "café", "corporal"],
+  },
+  {
+    id: "8",
+    name: "Hidratante Corporal Rosa Mosqueta",
+    slug: "hidratante-corporal-rosa-mosqueta",
+    category: "Corpo",
+    price: 59.9,
+    originalPrice: null,
+    description:
+      "Loção corporal com óleo de rosa mosqueta, vitamina E e colágeno vegetal. Hidratação intensa de 24h, pele macia e uniforme.",
+    images: ["bg-rose-200", "bg-pink-200", "bg-fuchsia-100"],
+    stock: 14,
+    featured: false,
+    rating: 4.7,
+    reviews: 76,
+    tags: ["hidratante", "rosa mosqueta", "24h"],
+  },
+];
+
+export type Product = (typeof products)[0];
+export type Store = typeof store;

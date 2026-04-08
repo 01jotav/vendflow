@@ -1,0 +1,248 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────
+// NextAuth — tabelas obrigatórias
+// ─────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─────────────────────────────────────────
+// SAAS - Usuário dono da loja (lojista)
+// ─────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  store     Store?
+  plan      Plan?     @relation(fields: [planId], references: [id])
+  planId    String?
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────
+// Planos do SaaS
+// ─────────────────────────────────────────
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   // ex: Starter, Pro, Premium
+  price       Float
+  maxProducts Int
+  features    Json
+  createdAt   DateTime @default(now())
+
+  users       User[]
+
+  @@map("plans")
+}
+
+// ─────────────────────────────────────────
+// Loja do lojista
+// ─────────────────────────────────────────
+
+model Store {
+  id          String      @id @default(cuid())
+  slug        String      @unique  // ex: minha-loja → minha-loja.vendflow.com.br
+  name        String
+  description String?
+  logoUrl     String?
+  themeColor  String      @default("#000000")
+  theme       StoreTheme  @default(MODERN)
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  owner       User        @relation(fields: [ownerId], references: [id])
+  ownerId     String      @unique
+
+  products    Product[]
+  orders      Order[]
+  whatsapp    WhatsappConfig?
+
+  @@map("stores")
+}
+
+enum StoreTheme {
+  MODERN
+  YOUNG
+  ELEGANT
+  MINIMAL
+}
+
+// ─────────────────────────────────────────
+// Produtos
+// ─────────────────────────────────────────
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  images      String[]
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  store       Store    @relation(fields: [storeId], references: [id])
+  storeId     String
+
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+
+  orderItems  OrderItem[]
+
+  @@map("products")
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String
+  products Product[]
+
+  @@map("categories")
+}
+
+// ─────────────────────────────────────────
+// Pedidos
+// ─────────────────────────────────────────
+
+model Order {
+  id          String      @id @default(cuid())
+  status      OrderStatus @default(PENDING)
+  total       Float
+  customerName String
+  customerEmail String
+  customerPhone String?
+  address     Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  store       Store       @relation(fields: [storeId], references: [id])
+  storeId     String
+
+  items       OrderItem[]
+  payment     Payment?
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  quantity  Int
+  price     Float
+
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@map("order_items")
+}
+
+// ─────────────────────────────────────────
+// Pagamentos
+// ─────────────────────────────────────────
+
+model Payment {
+  id              String        @id @default(cuid())
+  provider        String        // stripe | mercadopago
+  externalId      String        @unique
+  status          PaymentStatus @default(PENDING)
+  amount          Float
+  createdAt       DateTime      @default(now())
+
+  order           Order         @relation(fields: [orderId], references: [id])
+  orderId         String        @unique
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+}
+
+// ─────────────────────────────────────────
+// WhatsApp Automation
+// ─────────────────────────────────────────
+
+model WhatsappConfig {
+  id         String  @id @default(cuid())
+  instanceId String
+  apiKey     String
+  phone      String
+  active     Boolean @default(true)
+
+  store      Store   @relation(fields: [storeId], references: [id])
+  storeId    String  @unique
+
+  @@map("whatsapp_configs")
+}
