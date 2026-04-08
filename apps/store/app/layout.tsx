@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Bella Cosméticos",
-  description: "Cosméticos premium para realçar sua beleza natural.",
+  title: "Vendflow",
+  description: "Crie sua loja online em minutos com o Vendflow.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

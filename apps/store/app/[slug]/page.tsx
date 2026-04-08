@@ -1,8 +1,29 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShoppingBag, Truck, Shield, RefreshCw } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import { db } from "@vendflow/database";
+
+export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const store = await db.store.findUnique({
+    where: { slug },
+    select: { name: true, description: true, logoUrl: true },
+  });
+  if (!store) return { title: "Loja não encontrada · Vendflow" };
+  return {
+    title: `${store.name} · Vendflow`,
+    description: store.description ?? `Conheça os produtos de ${store.name}`,
+    icons: store.logoUrl ? [{ rel: "icon", url: store.logoUrl }] : [{ rel: "icon", url: "/favicon.ico" }],
+  };
+}
 
 const perks = [
   { icon: Truck,     label: "Frete grátis acima de R$ 150" },

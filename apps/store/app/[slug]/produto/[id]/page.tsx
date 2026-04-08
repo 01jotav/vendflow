@@ -1,8 +1,34 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ShoppingBag, Share2, Truck, Shield, ArrowLeft, Check } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import { db } from "@vendflow/database";
+
+export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; id: string }>;
+}): Promise<Metadata> {
+  const { slug, id } = await params;
+  const store = await db.store.findUnique({
+    where: { slug },
+    select: { id: true, name: true, logoUrl: true },
+  });
+  if (!store) return { title: "Loja não encontrada · Vendflow" };
+  const product = await db.product.findFirst({
+    where: { id, storeId: store.id },
+    select: { name: true, description: true },
+  });
+  if (!product) return { title: `${store.name} · Vendflow` };
+  return {
+    title: `${product.name} · ${store.name}`,
+    description: product.description ?? `${product.name} - ${store.name}`,
+    icons: store.logoUrl ? [{ rel: "icon", url: store.logoUrl }] : [{ rel: "icon", url: "/favicon.ico" }],
+  };
+}
 
 export default async function ProductPage({
   params,
