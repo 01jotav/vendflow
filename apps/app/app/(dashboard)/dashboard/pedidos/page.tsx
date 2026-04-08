@@ -16,13 +16,22 @@ export default async function PedidosPage() {
   const session = await auth();
   const storeId = session?.user?.store?.id;
 
-  const orders = storeId
-    ? await db.order.findMany({
-        where: { storeId },
-        include: { items: { include: { product: true } } },
-        orderBy: { createdAt: "desc" },
-      })
-    : [];
+  if (!storeId) {
+    return (
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
+          <ShoppingBag className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+          <p className="text-sm text-gray-400">Nenhuma loja encontrada.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const orders = await db.order.findMany({
+    where: { storeId },
+    include: { items: { include: { product: true } } },
+    orderBy: { createdAt: "desc" },
+  });
 
   const counts = {
     PENDING:   orders.filter((o) => o.status === "PENDING").length,
