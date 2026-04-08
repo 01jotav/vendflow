@@ -139,9 +139,9 @@ export default async function DashboardPage() {
               <span className="text-xs font-semibold text-white/80">Loja ativa</span>
             </div>
             <p className="text-sm font-bold mb-1">{storeName}</p>
-            <p className="text-xs text-white/60 mb-4">{storeSlug}.vendflow.com.br</p>
+            <p className="text-xs text-white/60 mb-4 truncate">/{storeSlug}</p>
             <a
-              href={`https://${storeSlug}.vendflow.com.br`}
+              href={`${process.env.NEXT_PUBLIC_STORE_URL ?? "https://vendflow-store.vercel.app"}/${storeSlug}`}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1.5 text-xs font-semibold bg-white/20 hover:bg-white/30 transition-colors px-3 py-2 rounded-lg w-fit"

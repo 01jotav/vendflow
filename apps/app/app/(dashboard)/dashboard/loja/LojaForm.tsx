@@ -32,7 +32,8 @@ export default function LojaForm({ store }: { store: Store }) {
   const [copied, setCopied] = useState(false);
   const [state, action, pending] = useActionState(updateStoreAction, {});
 
-  const storeUrl = `${store.slug}.vendflow.com.br`;
+  const storeBase = process.env.NEXT_PUBLIC_STORE_URL ?? "https://vendflow-store.vercel.app";
+  const storeUrl = `${storeBase}/${store.slug}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(storeUrl);

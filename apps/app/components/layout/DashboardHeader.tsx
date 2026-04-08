@@ -91,7 +91,7 @@ export default function DashboardHeader({ title, currentPath, user }: DashboardH
                   </div>
                   {user.store && (
                     <a
-                      href={`https://${user.store.slug}.vendflow.com.br`}
+                      href={`${process.env.NEXT_PUBLIC_STORE_URL ?? "https://vendflow-store.vercel.app"}/${user.store.slug}`}
                       target="_blank"
                       rel="noreferrer"
                       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"

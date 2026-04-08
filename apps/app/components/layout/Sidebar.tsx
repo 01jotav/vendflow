@@ -76,7 +76,7 @@ export default function Sidebar({ currentPath, storeSlug }: SidebarProps) {
       <div className="p-3 border-t border-white/5 space-y-1">
         {storeSlug && (
           <a
-            href={`https://${storeSlug}.vendflow.com.br`}
+            href={`${process.env.NEXT_PUBLIC_STORE_URL ?? "https://vendflow-store.vercel.app"}/${storeSlug}`}
             target="_blank"
             rel="noreferrer"
             title={collapsed ? "Ver minha loja" : undefined}
