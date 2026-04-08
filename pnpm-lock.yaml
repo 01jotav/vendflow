@@ -20,6 +20,12 @@ importers:
 
   apps/app:
     dependencies:
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
+      '@prisma/nextjs-monorepo-workaround-plugin':
+        specifier: ^5.22.0
+        version: 5.22.0
       '@vendflow/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -75,6 +81,12 @@ importers:
 
   apps/store:
     dependencies:
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
+      '@prisma/nextjs-monorepo-workaround-plugin':
+        specifier: ^5.22.0
+        version: 5.22.0
       '@vendflow/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -450,6 +462,9 @@ packages:
 
   '@prisma/get-platform@5.22.0':
     resolution: {integrity: sha512-pHhpQdr1UPFpt+zFfnPazhulaZYCUqeIcPpJViYoq9R+D/yw4fjE+CtnsnKzPYm0ddUbeXUzjGVGIRVgPDCk4Q==}
+
+  '@prisma/nextjs-monorepo-workaround-plugin@5.22.0':
+    resolution: {integrity: sha512-wuKp7FqhETHP2MJJu5y//ac83/EpDpoupcjlmp/Ijv3fnG576EIxY4SU4j24xXPIBOTuApkCk4RkgonkeAOXuQ==}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -1155,6 +1170,8 @@ snapshots:
   '@prisma/get-platform@5.22.0':
     dependencies:
       '@prisma/debug': 5.22.0
+
+  '@prisma/nextjs-monorepo-workaround-plugin@5.22.0': {}
 
   '@swc/helpers@0.5.15':
     dependencies:

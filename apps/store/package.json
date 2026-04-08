@@ -14,7 +14,9 @@
     "react-dom": "^19.0.0",
     "lucide-react": "^0.460.0",
     "clsx": "^2.1.1",
-    "@vendflow/database": "workspace:*"
+    "@vendflow/database": "workspace:*",
+    "@prisma/client": "^5.22.0",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^5.22.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
