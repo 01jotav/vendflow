@@ -19,17 +19,18 @@ const recentOrders = [
   { id: "#0038", customer: "Tatiane S.",   product: "Kit Skincare",        value: "R$ 189,90",status: "Entregue",   statusColor: "bg-gray-100 text-gray-600" },
 ];
 
-const quickActions = [
-  { label: "Adicionar produto", href: "/dashboard/produtos/novo", icon: Package, color: "bg-violet-600" },
-  { label: "Ver minha loja",    href: "#",                        icon: ExternalLink, color: "bg-gray-800" },
-  { label: "Configurar loja",   href: "/dashboard/loja",          icon: AlertCircle,  color: "bg-pink-600" },
-];
 
 export default async function DashboardPage() {
   const session = await auth();
   const userName  = session?.user?.name?.split(" ")[0] ?? "Lojista";
   const storeName = session?.user?.store?.name ?? "Minha Loja";
   const storeSlug = session?.user?.store?.slug ?? "#";
+  const storeBase = process.env.NEXT_PUBLIC_STORE_URL ?? "https://vendflow-store.vercel.app";
+  const quickActions = [
+    { label: "Adicionar produto", href: "/dashboard/produtos/novo", icon: Package,      color: "bg-violet-600", external: false },
+    { label: "Ver minha loja",    href: `${storeBase}/${storeSlug}`, icon: ExternalLink, color: "bg-gray-800",   external: true  },
+    { label: "Configurar loja",   href: "/dashboard/loja",          icon: AlertCircle,  color: "bg-pink-600",   external: false },
+  ];
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Boas vindas */}
@@ -117,6 +118,8 @@ export default async function DashboardPage() {
                   <a
                     key={action.label}
                     href={action.href}
+                    target={action.external ? "_blank" : undefined}
+                    rel={action.external ? "noreferrer" : undefined}
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
                   >
                     <div className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center flex-shrink-0`}>
