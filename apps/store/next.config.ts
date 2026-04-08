@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+// @ts-expect-error — plugin sem types
 import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 
 const nextConfig: NextConfig = {
