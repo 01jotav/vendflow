@@ -25,12 +25,12 @@ export default function CadastroPage() {
       <div className="w-full max-w-4xl relative grid lg:grid-cols-2 gap-8 items-center">
         {/* Benefícios — desktop */}
         <div className="hidden lg:block text-white">
-          <div className="inline-flex items-center gap-2 mb-10">
+          <a href={process.env.NEXT_PUBLIC_MARKETING_URL ?? "/"} className="inline-flex items-center gap-2 mb-10">
             <div className="w-10 h-10 rounded-xl bg-gradient-brand flex items-center justify-center shadow-lg">
               <Zap className="w-5 h-5 text-white" fill="white" />
             </div>
             <span className="text-2xl font-bold">Vendflow</span>
-          </div>
+          </a>
 
           <h2 className="text-3xl font-extrabold mb-3 leading-tight">
             Crie sua loja de cosméticos{" "}
@@ -55,12 +55,12 @@ export default function CadastroPage() {
         {/* Formulário */}
         <div>
           <div className="text-center mb-6 lg:hidden">
-            <div className="inline-flex items-center gap-2">
+            <a href={process.env.NEXT_PUBLIC_MARKETING_URL ?? "/"} className="inline-flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-brand flex items-center justify-center">
                 <Zap className="w-4 h-4 text-white" fill="white" />
               </div>
               <span className="text-xl font-bold text-white">Vendflow</span>
-            </div>
+            </a>
           </div>
 
           <div className="bg-white rounded-2xl shadow-2xl p-8">
