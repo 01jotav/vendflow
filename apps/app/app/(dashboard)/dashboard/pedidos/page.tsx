@@ -29,7 +29,10 @@ export default async function PedidosPage() {
 
   const orders = await db.order.findMany({
     where: { storeId },
-    include: { items: { include: { product: true } } },
+    include: {
+      items: { include: { product: true } },
+      customer: { select: { name: true, email: true, phone: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -99,8 +102,8 @@ export default async function PedidosPage() {
                         </span>
                       </td>
                       <td className="px-4 py-4">
-                        <p className="text-sm font-medium text-gray-900">{order.customerName}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{order.customerPhone ?? order.customerEmail}</p>
+                        <p className="text-sm font-medium text-gray-900">{order.customer.name}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{order.customer.phone ?? order.customer.email}</p>
                       </td>
                       <td className="px-4 py-4 hidden md:table-cell">
                         <p className="text-sm text-gray-600 truncate max-w-[160px]">{firstProduct}</p>
