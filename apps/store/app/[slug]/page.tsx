@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ShoppingBag, Truck, Shield, RefreshCw } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
+import ProductCard from "@/components/ProductCard";
+import { buildStoreChrome } from "@/lib/store-chrome";
+import { getCurrentCustomer } from "@/lib/customer-auth";
+import { getCartItemCount } from "@/lib/cart";
 import { db } from "@vendflow/database";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -53,9 +56,9 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
   if (!store || !store.active) notFound();
 
-  const logoInitial = store.name.charAt(0).toUpperCase();
-  const headerStore = { slug: store.slug, name: store.name, themeColor: store.themeColor, logoInitial };
-  const footerStore = { name: store.name, description: store.description, themeColor: store.themeColor, logoInitial };
+  const { header, footer } = buildStoreChrome(store);
+  const customer = await getCurrentCustomer(store.id);
+  const cartCount = customer ? await getCartItemCount(customer.id) : 0;
 
   const categoryNames = Array.from(
     new Set(store.products.map((p) => p.category?.name).filter((c): c is string => !!c))
@@ -63,7 +66,7 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
   return (
     <>
-      <StoreHeader store={headerStore} categories={categoryNames} cartCount={0} />
+      <StoreHeader store={header} categories={categoryNames} cartCount={cartCount} isLoggedIn={!!customer} />
 
       <main className="pt-16">
         <section
@@ -120,48 +123,21 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {store.products.map((product) => (
-                <a
+                <ProductCard
                   key={product.id}
-                  href={`/${store.slug}/produto/${product.id}`}
-                  className="group bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all overflow-hidden"
-                >
-                  <div className="h-36 sm:h-44 bg-gray-100 relative">
-                    {product.images[0] ? (
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        className="object-cover"
-                      />
-                    ) : null}
-                    {product.stock === 0 && (
-                      <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-                        <span className="text-xs font-bold text-gray-500 bg-white px-2 py-1 rounded-full border">
-                          Esgotado
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    {product.category && (
-                      <p className="text-xs text-gray-400 mb-0.5">{product.category.name}</p>
-                    )}
-                    <p className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1.5">
-                      {product.name}
-                    </p>
-                    <p className="text-base font-extrabold" style={{ color: store.themeColor }}>
-                      R$ {product.price.toFixed(2).replace(".", ",")}
-                    </p>
-                  </div>
-                </a>
+                  storeSlug={store.slug}
+                  themeColor={store.themeColor}
+                  product={product}
+                  showCategory
+                  showSoldOut
+                />
               ))}
             </div>
           )}
         </section>
       </main>
 
-      <StoreFooter store={footerStore} />
+      <StoreFooter store={footer} />
     </>
   );
 }

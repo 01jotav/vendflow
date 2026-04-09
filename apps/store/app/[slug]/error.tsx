@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function Error({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -17,7 +17,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         Pode ter sido um problema temporário. Tente recarregar.
       </p>
       <button
-        onClick={reset}
+        onClick={() => window.location.reload()}
         className="px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:bg-gray-700 transition-colors"
       >
         Tentar novamente

@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ShoppingBag, Share2, Truck, Shield, ArrowLeft, Check } from "lucide-react";
+import { Share2, Truck, Shield, ArrowLeft, Check } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
+import ProductCard from "@/components/ProductCard";
+import AddToCartButton from "@/components/AddToCartButton";
+import { buildStoreChrome, formatBRL } from "@/lib/store-chrome";
+import { getCurrentCustomer } from "@/lib/customer-auth";
+import { getCartItemCount } from "@/lib/cart";
 import { db } from "@vendflow/database";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -65,13 +70,13 @@ export default async function ProductPage({
     orderBy: { createdAt: "desc" },
   });
 
-  const logoInitial = store.name.charAt(0).toUpperCase();
-  const headerStore = { slug: store.slug, name: store.name, themeColor: store.themeColor, logoInitial };
-  const footerStore = { name: store.name, description: store.description, themeColor: store.themeColor, logoInitial };
+  const { header, footer } = buildStoreChrome(store);
+  const customer = await getCurrentCustomer(store.id);
+  const cartCount = customer ? await getCartItemCount(customer.id) : 0;
 
   return (
     <>
-      <StoreHeader store={headerStore} cartCount={0} />
+      <StoreHeader store={header} cartCount={cartCount} isLoggedIn={!!customer} />
 
       <main className="pt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
@@ -123,10 +128,10 @@ export default async function ProductPage({
 
               <div className="mb-5">
                 <p className="text-4xl font-extrabold" style={{ color: store.themeColor }}>
-                  R$ {product.price.toFixed(2).replace(".", ",")}
+                  {formatBRL(product.price)}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  ou 3x de R$ {(product.price / 3).toFixed(2).replace(".", ",")} sem juros
+                  ou 3x de {formatBRL(product.price / 3)} sem juros
                 </p>
               </div>
 
@@ -138,14 +143,13 @@ export default async function ProductPage({
               )}
 
               <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                <button
-                  disabled={product.stock === 0}
-                  className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: store.themeColor }}
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  {product.stock === 0 ? "Esgotado" : "Adicionar ao carrinho"}
-                </button>
+                <AddToCartButton
+                  productId={product.id}
+                  storeSlug={store.slug}
+                  themeColor={store.themeColor}
+                  stock={product.stock}
+                  isLoggedIn={!!customer}
+                />
                 <button className="sm:w-12 h-12 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all">
                   <Share2 className="w-5 h-5" />
                 </button>
@@ -178,29 +182,13 @@ export default async function ProductPage({
               <h2 className="text-xl font-bold text-gray-900 mb-5">Você também pode gostar</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {related.map((p) => (
-                  <a
+                  <ProductCard
                     key={p.id}
-                    href={`/${store.slug}/produto/${p.id}`}
-                    className="group bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-all overflow-hidden"
-                  >
-                    <div className="h-36 bg-gray-100 relative">
-                      {p.images[0] ? (
-                        <Image
-                          src={p.images[0]}
-                          alt={p.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, 25vw"
-                          className="object-cover"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="p-3">
-                      <p className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1">{p.name}</p>
-                      <p className="text-sm font-extrabold" style={{ color: store.themeColor }}>
-                        R$ {p.price.toFixed(2).replace(".", ",")}
-                      </p>
-                    </div>
-                  </a>
+                    storeSlug={store.slug}
+                    themeColor={store.themeColor}
+                    product={p}
+                    sizes="(max-width: 640px) 50vw, 25vw"
+                  />
                 ))}
               </div>
             </div>
@@ -208,7 +196,7 @@ export default async function ProductPage({
         </div>
       </main>
 
-      <StoreFooter store={footerStore} />
+      <StoreFooter store={footer} />
     </>
   );
 }

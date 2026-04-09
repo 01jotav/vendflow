@@ -9,6 +9,7 @@ import {
   ShoppingBag,
   MessageCircle,
   CreditCard,
+  Wallet,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
@@ -21,6 +22,7 @@ const navItems = [
   { icon: Store,           label: "Minha loja",   href: "/dashboard/loja" },
   { icon: Package,         label: "Produtos",      href: "/dashboard/produtos" },
   { icon: ShoppingBag,     label: "Pedidos",       href: "/dashboard/pedidos" },
+  { icon: Wallet,          label: "Pagamentos",    href: "/dashboard/pagamentos" },
   { icon: MessageCircle,   label: "WhatsApp",      href: "/dashboard/whatsapp" },
   { icon: CreditCard,      label: "Meu plano",     href: "/dashboard/plano" },
 ];

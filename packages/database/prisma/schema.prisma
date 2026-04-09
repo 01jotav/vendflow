@@ -113,9 +113,85 @@ model Store {
 
   products    Product[]
   orders      Order[]
+  customers   Customer[]
   whatsapp    WhatsappConfig?
+  mercadoPago MercadoPagoConfig?
 
   @@map("stores")
+}
+
+// ─────────────────────────────────────────
+// Integração Mercado Pago (OAuth marketplace)
+// ─────────────────────────────────────────
+
+model MercadoPagoConfig {
+  id           String   @id @default(cuid())
+  accessToken  String   @db.Text
+  publicKey    String
+  mpUserId     String?  // opcional: ID do usuário MP (preenchido pela API /users/me)
+  liveMode     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  store        Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId      String   @unique
+
+  @@map("mercadopago_configs")
+}
+
+// ─────────────────────────────────────────
+// Clientes finais (comprador de uma loja)
+// ─────────────────────────────────────────
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  password  String
+  phone     String?
+  address   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store     Store    @relation(fields: [storeId], references: [id])
+  storeId   String
+
+  orders    Order[]
+  cart      Cart?
+
+  @@unique([storeId, email])
+  @@map("customers")
+}
+
+// ─────────────────────────────────────────
+// Carrinho de compras (1 por customer)
+// ─────────────────────────────────────────
+
+model Cart {
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  customer   Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String     @unique
+
+  items      CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  quantity  Int
+
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    String
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
 }
 
 enum StoreTheme {
@@ -147,6 +223,7 @@ model Product {
   categoryId  String?
 
   orderItems  OrderItem[]
+  cartItems   CartItem[]
 
   @@map("products")
 }
@@ -167,15 +244,15 @@ model Order {
   id          String      @id @default(cuid())
   status      OrderStatus @default(PENDING)
   total       Float
-  customerName String
-  customerEmail String
-  customerPhone String?
   address     Json?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   store       Store       @relation(fields: [storeId], references: [id])
   storeId     String
+
+  customer    Customer    @relation(fields: [customerId], references: [id])
+  customerId  String
 
   items       OrderItem[]
   payment     Payment?

@@ -16,10 +16,14 @@
     "clsx": "^2.1.1",
     "@vendflow/database": "workspace:*",
     "@prisma/client": "^5.22.0",
-    "@prisma/nextjs-monorepo-workaround-plugin": "^5.22.0"
+    "@prisma/nextjs-monorepo-workaround-plugin": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.6",
+    "mercadopago": "^2.0.15"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",

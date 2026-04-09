@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShoppingBag, Search, Menu, X } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
 import clsx from "clsx";
 
 export interface StoreHeaderData {
@@ -15,9 +15,10 @@ interface StoreHeaderProps {
   store: StoreHeaderData;
   categories?: string[];
   cartCount?: number;
+  isLoggedIn?: boolean;
 }
 
-export default function StoreHeader({ store, categories = [], cartCount = 0 }: StoreHeaderProps) {
+export default function StoreHeader({ store, categories = [], cartCount = 0, isLoggedIn = false }: StoreHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -64,6 +65,14 @@ export default function StoreHeader({ store, categories = [], cartCount = 0 }: S
             <button className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors hidden sm:flex">
               <Search className="w-5 h-5" />
             </button>
+
+            <a
+              href={isLoggedIn ? `${homeHref}/minha-conta` : `${homeHref}/login`}
+              className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors hidden sm:flex"
+              title={isLoggedIn ? "Minha conta" : "Entrar"}
+            >
+              <User className="w-5 h-5" />
+            </a>
 
             <a
               href={`${homeHref}/carrinho`}
