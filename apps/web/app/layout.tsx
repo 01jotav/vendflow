@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Vendflow — Sua loja de cosméticos online em minutos",
     description:
-      "Crie sua loja personalizada, configure pagamentos e automatize confirmações pelo WhatsApp.",
+      "Crie sua loja personalizada, configure pagamentos e comece a vender em minutos.",
     url: "https://vendflow.com.br",
     siteName: "Vendflow",
     locale: "pt_BR",

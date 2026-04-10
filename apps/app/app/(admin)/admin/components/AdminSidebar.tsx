@@ -2,56 +2,48 @@
 
 import { useState } from "react";
 import {
-  Zap,
+  Shield,
   LayoutDashboard,
   Store,
-  Package,
-  ShoppingBag,
-  Wallet,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
-  LogOut,
+  ArrowLeft,
 } from "lucide-react";
 import clsx from "clsx";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Visão geral",  href: "/dashboard" },
-  { icon: Store,           label: "Minha loja",   href: "/dashboard/loja" },
-  { icon: Package,         label: "Produtos",      href: "/dashboard/produtos" },
-  { icon: ShoppingBag,     label: "Pedidos",       href: "/dashboard/pedidos" },
-  { icon: Wallet,          label: "Pagamentos",    href: "/dashboard/pagamentos" },
+  { icon: LayoutDashboard, label: "Painel",  href: "/admin" },
+  { icon: Store,           label: "Lojas",   href: "/admin/lojas" },
 ];
 
-interface SidebarProps {
+interface AdminSidebarProps {
   currentPath: string;
-  storeSlug: string | null;
 }
 
-export default function Sidebar({ currentPath, storeSlug }: SidebarProps) {
+export default function AdminSidebar({ currentPath }: AdminSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <aside
       className={clsx(
-        "hidden lg:flex flex-col bg-sidebar border-r border-white/5 transition-all duration-300 flex-shrink-0",
+        "hidden lg:flex flex-col bg-slate-900 border-r border-white/5 transition-all duration-300 flex-shrink-0",
         collapsed ? "w-16" : "w-60"
       )}
     >
       {/* Logo */}
       <div className={clsx("flex items-center h-16 px-4 border-b border-white/5", collapsed ? "justify-center" : "gap-2")}>
-        <div className="w-8 h-8 rounded-lg bg-gradient-brand flex items-center justify-center flex-shrink-0">
-          <Zap className="w-4 h-4 text-white" fill="white" />
+        <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center flex-shrink-0">
+          <Shield className="w-4 h-4 text-white" />
         </div>
         {!collapsed && (
-          <span className="text-white font-bold text-lg">Vendflow</span>
+          <span className="text-white font-bold text-lg">Admin</span>
         )}
       </div>
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {navItems.map(({ icon: Icon, label, href }) => {
-          const isActive = currentPath === href;
+          const isActive = currentPath === href || (href !== "/admin" && currentPath.startsWith(href));
           return (
             <a
               key={href}
@@ -72,28 +64,15 @@ export default function Sidebar({ currentPath, storeSlug }: SidebarProps) {
 
       {/* Footer */}
       <div className="p-3 border-t border-white/5 space-y-1">
-        {storeSlug && (
-          <a
-            href={`${process.env.NEXT_PUBLIC_STORE_URL ?? "https://vendflow-store.vercel.app"}/${storeSlug}`}
-            target="_blank"
-            rel="noreferrer"
-            title={collapsed ? "Ver minha loja" : undefined}
-            className={clsx("sidebar-item sidebar-item-inactive", collapsed && "justify-center px-2")}
-          >
-            <ExternalLink className="w-4 h-4 flex-shrink-0" />
-            {!collapsed && <span>Ver minha loja</span>}
-          </a>
-        )}
         <a
-          href="/login"
-          title={collapsed ? "Sair" : undefined}
-          className={clsx("sidebar-item text-red-400/60 hover:bg-red-500/10 hover:text-red-400", collapsed && "justify-center px-2")}
+          href="/dashboard"
+          title={collapsed ? "Voltar ao dashboard" : undefined}
+          className={clsx("sidebar-item sidebar-item-inactive", collapsed && "justify-center px-2")}
         >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          {!collapsed && <span>Sair</span>}
+          <ArrowLeft className="w-4 h-4 flex-shrink-0" />
+          {!collapsed && <span>Voltar ao dashboard</span>}
         </a>
 
-        {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className={clsx("sidebar-item sidebar-item-inactive w-full mt-2", collapsed && "justify-center px-2")}

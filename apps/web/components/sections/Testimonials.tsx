@@ -8,7 +8,7 @@ const testimonials = [
     avatar: "FO",
     avatarColor: "bg-pink-400",
     rating: 5,
-    text: "Em menos de um dia já tinha minha loja funcionando com pagamento online. O WhatsApp automático foi o que mais me surpreendeu — meus clientes ficam muito mais seguros e eu economizo horas respondendo mensagens.",
+    text: "Em menos de um dia já tinha minha loja funcionando com pagamento online. O que mais me surpreendeu foi a praticidade — meus clientes pagam pelo PIX na hora e eu acompanho tudo pelo painel.",
     highlight: "Faturei R$ 3.200 no primeiro mês",
   },
   {
@@ -38,8 +38,8 @@ const testimonials = [
     avatar: "TS",
     avatarColor: "bg-orange-400",
     rating: 5,
-    text: "Antes eu vendia só pelo WhatsApp e perdia muito pedido. Agora tenho uma loja profissional, aceito PIX na hora e ainda recebo confirmação automática para minha cliente. Meu negócio cresceu demais!",
-    highlight: "Saiu do WhatsApp para o e-commerce",
+    text: "Antes eu vendia só por rede social e perdia muito pedido. Agora tenho uma loja profissional, aceito PIX na hora e acompanho cada venda pelo painel. Meu negócio cresceu demais!",
+    highlight: "Profissionalizou suas vendas online",
   },
   {
     name: "Priscila Nunes",

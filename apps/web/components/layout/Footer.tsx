@@ -1,4 +1,4 @@
-import { Zap, Instagram, Youtube, MessageCircle } from "lucide-react";
+import { Zap, Instagram, Youtube, Twitter } from "lucide-react";
 
 const footerLinks = {
   Produto: [
@@ -10,7 +10,7 @@ const footerLinks = {
   Suporte: [
     { label: "Central de ajuda", href: "#" },
     { label: "Tutoriais em vídeo", href: "#" },
-    { label: "WhatsApp suporte", href: "#" },
+    { label: "E-mail de suporte", href: "#" },
     { label: "Status da plataforma", href: "#" },
   ],
   Empresa: [
@@ -30,7 +30,7 @@ const footerLinks = {
 const socialLinks = [
   { icon: Instagram, label: "Instagram", href: "#" },
   { icon: Youtube, label: "YouTube", href: "#" },
-  { icon: MessageCircle, label: "WhatsApp", href: "#" },
+  { icon: Twitter, label: "Twitter", href: "#" },
 ];
 
 export default function Footer() {

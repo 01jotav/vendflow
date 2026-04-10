@@ -7,7 +7,7 @@ import { registerAction } from "@/app/actions/auth";
 const benefits = [
   "14 dias grátis, sem cartão",
   "Loja online em minutos",
-  "WhatsApp automático incluso",
+  "Pagamentos integrados",
   "Suporte em português",
 ];
 

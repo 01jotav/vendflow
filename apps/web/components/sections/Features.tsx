@@ -27,9 +27,9 @@ const features = [
   {
     icon: MessageCircle,
     color: "bg-green-100 text-green-600",
-    title: "Automação no WhatsApp",
+    title: "Gestão de pedidos",
     description:
-      "Confirmações de pedido, atualizações de entrega e notificações automáticas direto no WhatsApp do cliente.",
+      "Acompanhe cada pedido em tempo real, altere status e mantenha seus clientes informados.",
   },
   {
     icon: CreditCard,
@@ -82,7 +82,7 @@ export default function Features() {
             <span className="gradient-text-soft">vender mais</span>
           </h2>
           <p className="text-lg text-gray-500">
-            Do cadastro da loja até a confirmação do pedido no WhatsApp, o
+            Do cadastro da loja até a gestão dos pedidos, o
             Vendflow cuida de tudo para você focar no que importa: seus clientes.
           </p>
         </div>

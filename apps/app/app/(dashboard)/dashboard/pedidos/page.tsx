@@ -1,16 +1,9 @@
 import { ShoppingBag } from "lucide-react";
-import clsx from "clsx";
 import { auth } from "@/auth";
 import { db } from "@vendflow/database";
+import OrderStatusSelect from "./OrderStatusSelect";
 
-const statusMap: Record<string, { label: string; color: string }> = {
-  PENDING:    { label: "Pendente",  color: "bg-yellow-100 text-yellow-700" },
-  PAID:       { label: "Pago",      color: "bg-green-100 text-green-700" },
-  PROCESSING: { label: "Processando", color: "bg-purple-100 text-purple-700" },
-  SHIPPED:    { label: "Enviado",   color: "bg-blue-100 text-blue-700" },
-  DELIVERED:  { label: "Entregue",  color: "bg-gray-100 text-gray-600" },
-  CANCELLED:  { label: "Cancelado", color: "bg-red-100 text-red-600" },
-};
+export const dynamic = "force-dynamic";
 
 export default async function PedidosPage() {
   const session = await auth();
@@ -91,7 +84,6 @@ export default async function PedidosPage() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {orders.map((order) => {
-                  const status = statusMap[order.status] ?? statusMap.PENDING;
                   const firstProduct = order.items[0]?.product?.name ?? "—";
                   const extraItems = order.items.length - 1;
                   return (
@@ -117,9 +109,7 @@ export default async function PedidosPage() {
                         </span>
                       </td>
                       <td className="px-4 py-4 text-center">
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${status.color}`}>
-                          {status.label}
-                        </span>
+                        <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
                       </td>
                       <td className="px-4 py-4 hidden sm:table-cell">
                         <span className="text-xs text-gray-400">

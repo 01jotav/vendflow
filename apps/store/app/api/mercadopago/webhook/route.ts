@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     data: { status: paymentStatus, externalId: String(mpPayment.id) },
   });
 
-  // Se pago, limpa o carrinho e decrementa estoque
+  // Se pago, limpa o carrinho e decrementa estoque.
   if (orderStatus === "PAID" && order.status !== "PAID") {
     const fullOrder = await db.order.findUnique({
       where: { id: order.id },

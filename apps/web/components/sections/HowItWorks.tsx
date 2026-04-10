@@ -15,7 +15,7 @@ const steps = [
     icon: Store,
     title: "Configure e personalize",
     description:
-      "Escolha um dos 4 temas exclusivos, adicione seus produtos com fotos e preços e conecte seu WhatsApp para automações.",
+      "Escolha um dos 4 temas exclusivos, adicione seus produtos com fotos e preços e configure seus pagamentos via Mercado Pago.",
     highlight: "Configuração em menos de 10 minutos",
   },
   {

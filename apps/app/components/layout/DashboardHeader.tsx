@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   Bell, Menu, X, Search, Zap, LayoutDashboard, Store,
-  Package, ShoppingBag, MessageCircle, CreditCard, LogOut, ChevronDown,
+  Package, ShoppingBag, LogOut, ChevronDown,
 } from "lucide-react";
 import clsx from "clsx";
 import { logoutAction } from "@/app/actions/auth";
@@ -13,8 +13,6 @@ const navItems = [
   { icon: Store,           label: "Minha loja",   href: "/dashboard/loja" },
   { icon: Package,         label: "Produtos",      href: "/dashboard/produtos" },
   { icon: ShoppingBag,     label: "Pedidos",       href: "/dashboard/pedidos" },
-  { icon: MessageCircle,   label: "WhatsApp",      href: "/dashboard/whatsapp" },
-  { icon: CreditCard,      label: "Meu plano",     href: "/dashboard/plano" },
 ];
 
 interface DashboardHeaderProps {

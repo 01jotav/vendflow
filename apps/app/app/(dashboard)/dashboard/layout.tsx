@@ -9,8 +9,6 @@ const pageTitles: Record<string, string> = {
   "/dashboard/loja":      "Minha loja",
   "/dashboard/produtos":  "Produtos",
   "/dashboard/pedidos":   "Pedidos",
-  "/dashboard/whatsapp":  "WhatsApp",
-  "/dashboard/plano":     "Meu plano",
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
