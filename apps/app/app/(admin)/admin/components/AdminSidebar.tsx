@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   Shield,
   LayoutDashboard,
@@ -16,12 +17,9 @@ const navItems = [
   { icon: Store,           label: "Lojas",   href: "/admin/lojas" },
 ];
 
-interface AdminSidebarProps {
-  currentPath: string;
-}
-
-export default function AdminSidebar({ currentPath }: AdminSidebarProps) {
+export default function AdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const currentPath = usePathname();
 
   return (
     <aside
