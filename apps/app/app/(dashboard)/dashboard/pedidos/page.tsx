@@ -20,20 +20,31 @@ export default async function PedidosPage() {
     );
   }
 
-  const orders = await db.order.findMany({
-    where: { storeId },
-    include: {
-      items: { include: { product: true } },
-      customer: { select: { name: true, email: true, phone: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const [orders, countPending, countPaid, countShipped, countDelivered] = await Promise.all([
+    db.order.findMany({
+      where: { storeId },
+      include: {
+        _count: { select: { items: true } },
+        items: {
+          take: 1,
+          include: { product: { select: { name: true } } },
+        },
+        customer: { select: { name: true, email: true, phone: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }),
+    db.order.count({ where: { storeId, status: "PENDING" } }),
+    db.order.count({ where: { storeId, status: "PAID" } }),
+    db.order.count({ where: { storeId, status: "SHIPPED" } }),
+    db.order.count({ where: { storeId, status: "DELIVERED" } }),
+  ]);
 
   const counts = {
-    PENDING:   orders.filter((o) => o.status === "PENDING").length,
-    PAID:      orders.filter((o) => o.status === "PAID").length,
-    SHIPPED:   orders.filter((o) => o.status === "SHIPPED").length,
-    DELIVERED: orders.filter((o) => o.status === "DELIVERED").length,
+    PENDING: countPending,
+    PAID: countPaid,
+    SHIPPED: countShipped,
+    DELIVERED: countDelivered,
   };
 
   return (
@@ -85,7 +96,7 @@ export default async function PedidosPage() {
               <tbody className="divide-y divide-gray-50">
                 {orders.map((order) => {
                   const firstProduct = order.items[0]?.product?.name ?? "—";
-                  const extraItems = order.items.length - 1;
+                  const extraItems = (order._count?.items ?? order.items.length) - 1;
                   return (
                     <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-5 py-4">

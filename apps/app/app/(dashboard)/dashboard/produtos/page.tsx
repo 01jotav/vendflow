@@ -11,8 +11,13 @@ export default async function ProdutosPage() {
   const products = storeId
     ? await db.product.findMany({
         where: { storeId },
-        include: { category: true },
+        select: {
+          id: true, name: true, price: true, stock: true,
+          images: true, active: true, createdAt: true,
+          category: { select: { name: true } },
+        },
         orderBy: { createdAt: "desc" },
+        take: 100,
       })
     : [];
 

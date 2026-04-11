@@ -1,48 +1,58 @@
 import { db } from "@vendflow/database";
 import { Store, ShoppingBag, DollarSign, TrendingUp } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { brl } from "@/lib/format";
 import { PAID_ORDER_STATUSES } from "@/lib/order-status";
 
 export const dynamic = "force-dynamic";
 
+const getAdminKPIs = unstable_cache(
+  async () => {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const [totalStores, newStoresMonth, totalOrdersMonth, recentOrders] =
+      await Promise.all([
+        db.store.count({ where: { active: true } }),
+        db.store.count({ where: { createdAt: { gte: startOfMonth } } }),
+        db.order.count({ where: { createdAt: { gte: startOfMonth } } }),
+        db.order.findMany({
+          where: {
+            status: { in: PAID_ORDER_STATUSES },
+            createdAt: { gte: thirtyDaysAgo },
+          },
+          select: { total: true, createdAt: true },
+        }),
+      ]);
+
+    const gmvTotal = recentOrders.reduce((sum, o) => sum + o.total, 0);
+
+    const gmvByDay = new Map<string, number>();
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      gmvByDay.set(d.toISOString().slice(0, 10), 0);
+    }
+    for (const o of recentOrders) {
+      const key = o.createdAt.toISOString().slice(0, 10);
+      gmvByDay.set(key, (gmvByDay.get(key) ?? 0) + o.total);
+    }
+
+    const chartData = Array.from(gmvByDay.entries()).map(([date, total]) => ({
+      date,
+      total,
+    }));
+    const maxGmv = Math.max(...chartData.map((d) => d.total), 1);
+
+    return { totalStores, newStoresMonth, totalOrdersMonth, gmvTotal, chartData, maxGmv };
+  },
+  ["admin-kpis"],
+  { revalidate: 60 }
+);
+
 export default async function AdminPage() {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-  const [
-    totalStores,
-    newStoresMonth,
-    totalOrdersMonth,
-    recentOrders,
-  ] = await Promise.all([
-    db.store.count({ where: { active: true } }),
-    db.store.count({ where: { createdAt: { gte: startOfMonth } } }),
-    db.order.count({ where: { createdAt: { gte: startOfMonth } } }),
-    db.order.findMany({
-      where: {
-        status: { in: PAID_ORDER_STATUSES },
-        createdAt: { gte: thirtyDaysAgo },
-      },
-      select: { total: true, createdAt: true },
-    }),
-  ]);
-
-  const gmvTotal = recentOrders.reduce((sum, o) => sum + o.total, 0);
-
-  // Agrupa GMV por dia a partir dos pedidos já buscados
-  const gmvByDay = new Map<string, number>();
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-    gmvByDay.set(d.toISOString().slice(0, 10), 0);
-  }
-  for (const o of recentOrders) {
-    const key = o.createdAt.toISOString().slice(0, 10);
-    gmvByDay.set(key, (gmvByDay.get(key) ?? 0) + o.total);
-  }
-
-  const chartData = Array.from(gmvByDay.entries()).map(([date, total]) => ({ date, total }));
-  const maxGmv = Math.max(...chartData.map((d) => d.total), 1);
+  const { totalStores, newStoresMonth, totalOrdersMonth, gmvTotal, chartData, maxGmv } =
+    await getAdminKPIs();
 
   const cards = [
     { label: "Lojas ativas",       value: totalStores,      icon: Store,       color: "bg-blue-500" },

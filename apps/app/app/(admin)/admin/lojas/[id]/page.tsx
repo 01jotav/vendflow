@@ -2,20 +2,16 @@ import { notFound } from "next/navigation";
 import { db } from "@vendflow/database";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import ToggleStoreButton from "./ToggleStoreButton";
 import { brl, storeUrl } from "@/lib/format";
 import { PAID_ORDER_STATUSES, statusMap } from "@/lib/order-status";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminStoreDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  const [store, recentOrders, topProducts, gmvAgg] = await Promise.all([
+const getStoreDetail = unstable_cache(
+  async (id: string) => {
+    const [store, recentOrders, paidOrderIds, gmvAgg] = await Promise.all([
     db.store.findUnique({
       where: { id },
       include: {
@@ -29,26 +25,50 @@ export default async function AdminStoreDetailPage({
       take: 10,
       include: { customer: { select: { name: true } } },
     }),
-    db.orderItem.groupBy({
-      by: ["productId"],
-      where: { order: { storeId: id, status: { in: PAID_ORDER_STATUSES } } },
-      _sum: { quantity: true },
-      orderBy: { _sum: { quantity: "desc" } },
-      take: 5,
+    db.order.findMany({
+      where: { storeId: id, status: { in: PAID_ORDER_STATUSES } },
+      select: { id: true },
     }),
     db.order.aggregate({
       where: { storeId: id, status: { in: PAID_ORDER_STATUSES } },
       _sum: { total: true },
     }),
   ]);
-  if (!store) notFound();
+  if (!store) return null;
+
+  // Top products — usa os IDs de pedidos pagos já filtrados (evita nested where no orderItem)
+  const topProducts = paidOrderIds.length
+    ? await db.orderItem.groupBy({
+        by: ["productId"],
+        where: { orderId: { in: paidOrderIds.map((o) => o.id) } },
+        _sum: { quantity: true },
+        orderBy: { _sum: { quantity: "desc" } },
+        take: 5,
+      })
+    : [];
 
   const productIds = topProducts.map((p) => p.productId);
   const products = productIds.length
     ? await db.product.findMany({ where: { id: { in: productIds } }, select: { id: true, name: true } })
     : [];
-  const productMap = new Map(products.map((p) => [p.id, p.name]));
+  const productMap = Object.fromEntries(products.map((p) => [p.id, p.name]));
 
+    return { store, recentOrders, topProducts, gmvAgg, productMap };
+  },
+  ["admin-store-detail"],
+  { revalidate: 30 }
+);
+
+export default async function AdminStoreDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const data = await getStoreDetail(id);
+  if (!data?.store) notFound();
+
+  const { store, recentOrders, topProducts, gmvAgg, productMap } = data;
   const url = storeUrl(store.slug);
 
   return (
@@ -107,7 +127,7 @@ export default async function AdminStoreDetailPage({
                 <li key={tp.productId} className="flex items-center justify-between text-sm">
                   <span className="text-gray-700">
                     <span className="text-gray-400 mr-2">#{i + 1}</span>
-                    {productMap.get(tp.productId) ?? "—"}
+                    {productMap[tp.productId] ?? "—"}
                   </span>
                   <span className="font-medium text-gray-900">{tp._sum.quantity ?? 0} un.</span>
                 </li>

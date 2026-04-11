@@ -1,27 +1,37 @@
 import { db } from "@vendflow/database";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import { unstable_cache } from "next/cache";
 import { brl, storeUrl } from "@/lib/format";
 import { PAID_ORDER_STATUSES } from "@/lib/order-status";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminLojasPage() {
-  const stores = await db.store.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 200,
-    include: {
-      owner: { select: { name: true, email: true } },
-      _count: { select: { products: true, orders: true } },
-    },
-  });
+const getAdminStores = unstable_cache(
+  async () => {
+    const [stores, gmvByStore] = await Promise.all([
+      db.store.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 200,
+        include: {
+          owner: { select: { name: true, email: true } },
+          _count: { select: { products: true, orders: true } },
+        },
+      }),
+      db.order.groupBy({
+        by: ["storeId"],
+        where: { status: { in: PAID_ORDER_STATUSES } },
+        _sum: { total: true },
+      }),
+    ]);
+    return { stores, gmvByStore };
+  },
+  ["admin-stores"],
+  { revalidate: 30 }
+);
 
-  // GMV por loja (soma dos pedidos pagos)
-  const gmvByStore = await db.order.groupBy({
-    by: ["storeId"],
-    where: { status: { in: PAID_ORDER_STATUSES } },
-    _sum: { total: true },
-  });
+export default async function AdminLojasPage() {
+  const { stores, gmvByStore } = await getAdminStores();
   const gmvMap = new Map(gmvByStore.map((r) => [r.storeId, r._sum.total ?? 0]));
 
 
