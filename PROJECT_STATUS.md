@@ -189,6 +189,15 @@ Localização: [packages/database/prisma/schema.prisma](packages/database/prisma
 - **Fallback** para pedidos antigos: busca via `external_reference` → `order.storeId`
 - **`.env.example`** atualizado com todas as vars necessárias
 
+### 5.6 State machine de pedidos + restore de estoque (sessão 3)
+- **State machine** definida em `apps/app/lib/order-status.ts` (`VALID_TRANSITIONS`)
+- Fluxo: PENDING → PAID (webhook) → PROCESSING → SHIPPED → DELIVERED
+- Cancelamento permitido de: PENDING, PAID, PROCESSING (não de SHIPPED/DELIVERED)
+- DELIVERED e CANCELLED são estados finais
+- **API** valida transições e retorna erro 422 com mensagem descritiva se inválida
+- **Restore de estoque** ao cancelar pedidos que estavam em PAID/PROCESSING/SHIPPED
+- **OrderStatusSelect** mostra apenas transições válidas no dropdown
+
 ---
 
 ## 6. Variáveis de ambiente
@@ -244,8 +253,8 @@ Nenhum reportado.
 
 ### Segurança (resolver antes de clientes reais)
 1. **Rate limiting** — endpoints de login/signup do customer sem throttle (brute force trivial)
-2. **State machine de pedidos** — status pode pular etapas ou retroceder (PENDING → DELIVERED, DELIVERED → PROCESSING)
-3. **Estoque não restaurado no cancelamento** — `api/orders/[id]/status` muda pra CANCELLED mas não restaura stock nem estorna no MP
+2. ~~**State machine de pedidos**~~ ✅ Implementada — transições validadas, estados finais protegidos
+3. ~~**Estoque não restaurado no cancelamento**~~ ✅ Restauração automática ao cancelar pedidos pagos
 4. **Race condition no estoque** — entre criar o pedido e o webhook confirmar, dois clientes podem comprar o mesmo último item
 5. **Validação de URLs de imagem** — aceita qualquer string sem sanitizar (potencial XSS)
 6. **Senha do customer fraca** — mínimo 6 chars (deveria ser 8+)
