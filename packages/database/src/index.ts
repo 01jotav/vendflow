@@ -14,3 +14,4 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
 export * from "@prisma/client";
 export { PrismaAdapter } from "@auth/prisma-adapter";
+export { checkRateLimit, recordAttempt } from "./rate-limit";

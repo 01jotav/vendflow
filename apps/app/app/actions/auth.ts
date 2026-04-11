@@ -1,9 +1,10 @@
 "use server";
 
 import { signIn, signOut } from "@/auth";
-import { db } from "@vendflow/database";
+import { db, checkRateLimit, recordAttempt } from "@vendflow/database";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -37,6 +38,12 @@ export async function loginAction(
     password: formData.get("password"),
   };
 
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rl = await checkRateLimit({ prefix: "lojista-login", key: ip, maxAttempts: 5, windowSeconds: 900 });
+  if (!rl.allowed) {
+    return { error: "Muitas tentativas. Tente novamente em alguns minutos." };
+  }
+
   const parsed = loginSchema.safeParse(raw);
   if (!parsed.success) {
     return { fieldErrors: parsed.error.flatten().fieldErrors };
@@ -50,6 +57,7 @@ export async function loginAction(
     });
   } catch (error) {
     if (error instanceof AuthError) {
+      await recordAttempt("lojista-login", ip);
       switch (error.type) {
         case "CredentialsSignin":
           return { error: "E-mail ou senha incorretos." };
@@ -76,12 +84,20 @@ export async function registerAction(
     password:  formData.get("password"),
   };
 
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rl = await checkRateLimit({ prefix: "lojista-signup", key: ip, maxAttempts: 3, windowSeconds: 900 });
+  if (!rl.allowed) {
+    return { error: "Muitas tentativas. Tente novamente em alguns minutos." };
+  }
+
   const parsed = registerSchema.safeParse(raw);
   if (!parsed.success) {
     return { fieldErrors: parsed.error.flatten().fieldErrors };
   }
 
   const { name, email, storeName, password } = parsed.data;
+
+  await recordAttempt("lojista-signup", ip);
 
   // Checar se e-mail já existe
   const existing = await db.user.findUnique({ where: { email } });

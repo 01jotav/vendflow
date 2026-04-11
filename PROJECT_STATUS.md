@@ -198,6 +198,13 @@ Localização: [packages/database/prisma/schema.prisma](packages/database/prisma
 - **Restore de estoque** ao cancelar pedidos que estavam em PAID/PROCESSING/SHIPPED
 - **OrderStatusSelect** mostra apenas transições válidas no dropdown
 
+### 5.7 Rate limiting nos endpoints de auth (sessão 3)
+- **Tabela `RateLimitEntry`** no Prisma com índice em `[key, createdAt]` — funciona cross-instance (serverless)
+- **Helper reutilizável** em `packages/database/src/rate-limit.ts` (`checkRateLimit`, `recordAttempt`)
+- **Endpoints protegidos:** customer login (5/15min), customer signup (3/15min), lojista login (5/15min), lojista cadastro (3/15min)
+- **HTTP 429** com header `Retry-After` nos API routes
+- **Frontend** exibe "Muitas tentativas. Tente novamente mais tarde." automaticamente (mesma mensagem de erro)
+
 ---
 
 ## 6. Variáveis de ambiente
@@ -232,7 +239,7 @@ NEXT_PUBLIC_APP_URL="https://vendflow-app.vercel.app"
 ## 7. Onde parou
 
 ### Último commit
-`91ec05b chore: formalize prisma schema migration and add admin seed script`
+`5cddf18 feat: order status state machine with stock restoration on cancellation`
 
 ### Estado atual
 - ✅ Código pushed pra `origin/main`
@@ -252,7 +259,7 @@ Nenhum reportado.
 ## 8. Débitos técnicos pendentes
 
 ### Segurança (resolver antes de clientes reais)
-1. **Rate limiting** — endpoints de login/signup do customer sem throttle (brute force trivial)
+1. ~~**Rate limiting**~~ ✅ Implementado — 5 tentativas login / 3 signups por IP em 15 min (tabela `RateLimitEntry`)
 2. ~~**State machine de pedidos**~~ ✅ Implementada — transições validadas, estados finais protegidos
 3. ~~**Estoque não restaurado no cancelamento**~~ ✅ Restauração automática ao cancelar pedidos pagos
 4. **Race condition no estoque** — entre criar o pedido e o webhook confirmar, dois clientes podem comprar o mesmo último item

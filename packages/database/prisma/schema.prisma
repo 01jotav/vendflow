@@ -302,3 +302,16 @@ enum PaymentStatus {
   REFUNDED
 }
 
+// ─────────────────────────────────────────
+// Rate limiting
+// ─────────────────────────────────────────
+
+model RateLimitEntry {
+  id        String   @id @default(cuid())
+  key       String   // ex: "login:<ip>" ou "signup:<ip>"
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+  @@map("rate_limit_entries")
+}
+
