@@ -3,6 +3,7 @@ import { MercadoPagoConfig, Payment } from "mercadopago";
 import { db } from "@vendflow/database";
 import type { OrderStatus, PaymentStatus } from "@prisma/client";
 import { createHmac } from "crypto";
+import { dispatchOrderEvent } from "@/lib/webhook-dispatcher";
 
 /**
  * Webhook do Mercado Pago.
@@ -152,11 +153,14 @@ export async function POST(req: Request) {
     data: { status: paymentStatus, externalId: String(mpPayment.id) },
   });
 
-  // 7. Se pago (e não era antes), limpa carrinho e decrementa estoque
+  // 7. Se pago (e não era antes), limpa carrinho, decrementa estoque e dispara webhook
   if (orderStatus === "PAID" && order.status !== "PAID") {
     const fullOrder = await db.order.findUnique({
       where: { id: order.id },
-      include: { items: true, customer: { select: { id: true } } },
+      include: {
+        items: { include: { product: { select: { name: true } } } },
+        customer: { select: { id: true, name: true, email: true, phone: true } },
+      },
     });
     if (fullOrder) {
       await db.cart.deleteMany({ where: { customerId: fullOrder.customer.id } });
@@ -166,6 +170,23 @@ export async function POST(req: Request) {
           data: { stock: { decrement: item.quantity } },
         });
       }
+
+      // 8. Disparar webhook externo (fire-and-forget)
+      dispatchOrderEvent(order.storeId, "order.paid", {
+        orderId: order.id,
+        status: "paid",
+        total: fullOrder.total,
+        customer: {
+          name: fullOrder.customer.name,
+          phone: fullOrder.customer.phone,
+          email: fullOrder.customer.email,
+        },
+        items: fullOrder.items.map((i) => ({
+          product: i.product.name,
+          quantity: i.quantity,
+          price: i.price,
+        })),
+      }).catch(() => {}); // fire-and-forget
     }
   }
 

@@ -8,6 +8,7 @@ import {
   Package,
   ShoppingBag,
   Wallet,
+  Webhook,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
@@ -21,6 +22,7 @@ const navItems = [
   { icon: Package,         label: "Produtos",      href: "/dashboard/produtos" },
   { icon: ShoppingBag,     label: "Pedidos",       href: "/dashboard/pedidos" },
   { icon: Wallet,          label: "Pagamentos",    href: "/dashboard/pagamentos" },
+  { icon: Webhook,         label: "Integrações",   href: "/dashboard/integracoes" },
 ];
 
 interface SidebarProps {

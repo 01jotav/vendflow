@@ -38,3 +38,29 @@ export async function updateStoreAction(
   revalidatePath("/dashboard/loja");
   return { success: true };
 }
+
+// ─── Webhook URL ────────────────────────────────────────────────────────────
+
+const webhookSchema = z.object({
+  webhookUrl: z.string().url("URL inválida").or(z.literal("")),
+});
+
+export async function updateWebhookAction(
+  _prev: StoreState | null,
+  formData: FormData,
+): Promise<StoreState> {
+  const session = await auth();
+  if (!session?.user?.store?.id) return { message: "Não autorizado" };
+
+  const raw = (formData.get("webhookUrl") as string)?.trim() ?? "";
+  const parsed = webhookSchema.safeParse({ webhookUrl: raw });
+  if (!parsed.success) return { message: "URL inválida. Use https://..." };
+
+  await db.store.update({
+    where: { id: session.user.store.id },
+    data: { webhookUrl: parsed.data.webhookUrl || null },
+  });
+
+  revalidatePath("/dashboard/integracoes");
+  return { success: true, message: raw ? "Webhook salvo com sucesso!" : "Webhook removido." };
+}

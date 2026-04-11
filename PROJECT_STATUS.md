@@ -205,6 +205,15 @@ Localização: [packages/database/prisma/schema.prisma](packages/database/prisma
 - **HTTP 429** com header `Retry-After` nos API routes
 - **Frontend** exibe "Muitas tentativas. Tente novamente mais tarde." automaticamente (mesma mensagem de erro)
 
+### 5.8 Motor de Webhooks Externos — Feature PRO (sessão 3)
+- **Schema**: enum `StorePlan` (BASIC, PRO) + campo `webhookUrl` no model Store
+- **Página `/dashboard/integracoes`**: configuração de webhook URL com trava visual por plano
+- **WebhookService** em `apps/store/lib/webhook-dispatcher.ts`: `dispatchOrderEvent()` fire-and-forget com timeout 10s
+- **Payload padronizado**: `{ event: "order.paid", timestamp, data: { orderId, status, total, customer, items } }`
+- **Integração**: chamada automática no webhook do MP após confirmação de pagamento PAID
+- **Segurança**: só dispara para lojas com `plan === "PRO"` e `webhookUrl` configurada
+- **UI PRO gate**: campo desabilitado com aviso "Disponível apenas no plano PRO" para lojas BASIC
+
 ---
 
 ## 6. Variáveis de ambiente
@@ -278,23 +287,25 @@ Nenhum reportado.
 ## 9. Próximos passos sugeridos
 
 ### Prioridade alta (pré-launch)
-1. **State machine de pedidos + restore de estoque no cancelamento**
-2. **Rate limiting nos endpoints de auth** (middleware ou upstash/ratelimit)
-3. **Email transacional** (Resend ou Nodemailer + templates)
+1. ~~State machine de pedidos + restore de estoque~~ ✅
+2. ~~Rate limiting nos endpoints de auth~~ ✅
+3. ~~Motor de webhooks externos (Feature PRO)~~ ✅
+4. **Upload de imagens via Cloudflare R2** — hoje só aceita URLs externas
+5. **Billing/planos** — implementar upgrade BASIC → PRO (Stripe ou MP)
 
 ### Prioridade média (pós-launch)
-4. Filtros e paginação no admin (busca por nome/slug, status)
-5. Gráficos com recharts no `/admin`
-6. Upload de imagens via Cloudflare R2
-7. Shipping configurável pelo lojista
+6. Filtros e paginação no admin (busca por nome/slug, status)
+7. Gráficos com recharts no `/admin`
+8. Shipping configurável pelo lojista
+9. Mais eventos de webhook (order.shipped, order.cancelled, etc.)
 
 ### Prioridade baixa (futuro)
-8. WhatsApp automation (n8n ou Twilio, feature premium)
-9. Planos/pricing (modelo removido, redesenhar quando for cobrar)
-10. Guest checkout (hoje obriga criar conta)
-11. Cron jobs (carrinho abandonado, relatórios)
-12. Testes automatizados
-13. Observability (Sentry, analytics)
+10. Email transacional (Resend ou Nodemailer + templates)
+11. WhatsApp automation (via n8n + webhook do Vendflow)
+12. Guest checkout (hoje obriga criar conta)
+13. Cron jobs (carrinho abandonado, relatórios)
+14. Testes automatizados
+15. Observability (Sentry, analytics)
 
 ---
 

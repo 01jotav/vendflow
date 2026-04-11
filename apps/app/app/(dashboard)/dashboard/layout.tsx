@@ -8,7 +8,8 @@ const pageTitles: Record<string, string> = {
   "/dashboard":           "Visão geral",
   "/dashboard/loja":      "Minha loja",
   "/dashboard/produtos":  "Produtos",
-  "/dashboard/pedidos":   "Pedidos",
+  "/dashboard/pedidos":     "Pedidos",
+  "/dashboard/integracoes": "Integrações",
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
