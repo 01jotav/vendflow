@@ -272,12 +272,12 @@ Nenhum reportado.
 2. ~~**State machine de pedidos**~~ ✅ Implementada — transições validadas, estados finais protegidos
 3. ~~**Estoque não restaurado no cancelamento**~~ ✅ Restauração automática ao cancelar pedidos pagos
 4. **Race condition no estoque** — entre criar o pedido e o webhook confirmar, dois clientes podem comprar o mesmo último item
-5. **Validação de URLs de imagem** — aceita qualquer string sem sanitizar (potencial XSS)
+5. ~~**Validação de URLs de imagem**~~ ✅ Imagens agora vêm do R2 (domínio controlado), input de URL externo removido
 6. **Senha do customer fraca** — mínimo 6 chars (deveria ser 8+)
 
 ### Infraestrutura
 7. **Email transacional** — zero notificações (confirmação, status, boas-vindas)
-8. **Upload de imagens** — só aceita URLs externas, R2 configurado no `.env.example` mas não integrado
+8. ~~**Upload de imagens**~~ ✅ Presigned URLs via Cloudflare R2 (produtos + logo da loja)
 9. **Shipping hardcoded** — "Frete grátis acima de R$150" não é configurável pelo lojista
 10. **Testes** — zero cobertura (unit, integration, e2e)
 11. **Observability** — sem Sentry, sem logs estruturados, sem analytics
@@ -290,7 +290,7 @@ Nenhum reportado.
 1. ~~State machine de pedidos + restore de estoque~~ ✅
 2. ~~Rate limiting nos endpoints de auth~~ ✅
 3. ~~Motor de webhooks externos (Feature PRO)~~ ✅
-4. **Upload de imagens via Cloudflare R2** — hoje só aceita URLs externas
+4. ~~Upload de imagens via Cloudflare R2~~ ✅ — presigned URLs, drag & drop, produtos + logo
 5. **Billing/planos** — implementar upgrade BASIC → PRO (Stripe ou MP)
 
 ### Prioridade média (pós-launch)

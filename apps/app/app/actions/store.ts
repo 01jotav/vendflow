@@ -10,6 +10,7 @@ const schema = z.object({
   description: z.string().optional(),
   themeColor:  z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#7c3aed"),
   theme:       z.enum(["MODERN", "YOUNG", "ELEGANT", "MINIMAL"]).default("MODERN"),
+  logoUrl:     z.string().url().or(z.literal("")).optional(),
 });
 
 export type StoreState = { message?: string; success?: boolean };
@@ -26,13 +27,15 @@ export async function updateStoreAction(
     description: formData.get("description") || undefined,
     themeColor:  formData.get("themeColor"),
     theme:       formData.get("theme"),
+    logoUrl:     formData.get("logoUrl") || "",
   });
 
   if (!parsed.success) return { message: "Dados inválidos" };
 
+  const { logoUrl, ...rest } = parsed.data;
   await db.store.update({
     where: { id: session.user.store.id },
-    data: parsed.data,
+    data: { ...rest, logoUrl: logoUrl || null },
   });
 
   revalidatePath("/dashboard/loja");

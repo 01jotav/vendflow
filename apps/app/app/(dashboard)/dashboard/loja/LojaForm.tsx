@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { Check, Save, ExternalLink, Copy } from "lucide-react";
 import clsx from "clsx";
 import { updateStoreAction } from "@/app/actions/store";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 const themes = [
   { id: "MODERN",  label: "Modern",  emoji: "⚡", desc: "Limpo e sofisticado" },
@@ -24,11 +25,13 @@ interface Store {
   description: string | null;
   themeColor: string;
   theme: string;
+  logoUrl: string | null;
 }
 
 export default function LojaForm({ store }: { store: Store }) {
   const [selectedTheme, setSelectedTheme] = useState(store.theme);
   const [themeColor, setThemeColor] = useState(store.themeColor);
+  const [logoUrl, setLogoUrl] = useState<string[]>(store.logoUrl ? [store.logoUrl] : []);
   const [copied, setCopied] = useState(false);
   const [state, action, pending] = useActionState(updateStoreAction, {});
 
@@ -46,6 +49,7 @@ export default function LojaForm({ store }: { store: Store }) {
       {/* hidden inputs para os campos controlados */}
       <input type="hidden" name="theme" value={selectedTheme} />
       <input type="hidden" name="themeColor" value={themeColor} />
+      <input type="hidden" name="logoUrl" value={logoUrl[0] ?? ""} />
 
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
@@ -139,6 +143,18 @@ export default function LojaForm({ store }: { store: Store }) {
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
             />
           </div>
+        </div>
+
+        {/* Logo */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <ImageUpload
+            value={logoUrl}
+            onChange={setLogoUrl}
+            folder="logos"
+            single
+            label="Logo da loja"
+            hint="Imagem quadrada recomendada. Máx. 5 MB."
+          />
         </div>
 
         {/* Cor tema */}
