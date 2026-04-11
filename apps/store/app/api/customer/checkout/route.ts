@@ -74,7 +74,7 @@ export async function POST() {
   const storeBase = process.env.NEXT_PUBLIC_STORE_URL ?? "http://localhost:3002";
   const isLocal = storeBase.includes("localhost") || storeBase.includes("127.0.0.1");
   const backUrl = `${storeBase}/${store.slug}/pedido/${order.id}`;
-  const webhookUrl = `${storeBase}/api/mercadopago/webhook`;
+  const webhookUrl = `${storeBase}/api/mercadopago/webhook?storeId=${store.id}`;
 
   const mpClient = new MercadoPagoConfig({ accessToken: store.mercadoPago.accessToken });
   const preference = new Preference(mpClient);
