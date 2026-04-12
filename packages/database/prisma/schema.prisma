@@ -91,9 +91,12 @@ model Store {
   logoUrl     String?
   themeColor  String      @default("#000000")
   theme       StoreTheme  @default(MODERN)
-  plan        StorePlan   @default(BASIC)
-  webhookUrl  String?
-  active      Boolean     @default(true)
+  plan                  StorePlan   @default(BASIC)
+  webhookUrl            String?
+  stripeCustomerId      String?     @unique
+  stripeSubscriptionId  String?     @unique
+  stripePriceId         String?
+  active                Boolean     @default(true)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 

@@ -1,7 +1,7 @@
 # Vendflow — Status do Projeto e Próximos Passos
 
-> **Última atualização:** 2026-04-10
-> **Branch:** `main` — commit atual `3f9e001`
+> **Última atualização:** 2026-04-12
+> **Branch:** `main`
 > **Deploy:** Vercel (duas apps separadas)
 
 ---
@@ -291,7 +291,7 @@ Nenhum reportado.
 2. ~~Rate limiting nos endpoints de auth~~ ✅
 3. ~~Motor de webhooks externos (Feature PRO)~~ ✅
 4. ~~Upload de imagens via Cloudflare R2~~ ✅ — presigned URLs, drag & drop, produtos + logo
-5. **Billing/planos** — implementar upgrade BASIC → PRO (Stripe ou MP)
+5. ~~Billing/planos~~ ✅ — Stripe Checkout + Customer Portal + webhook (upgrade/downgrade automático)
 
 ### Prioridade média (pós-launch)
 6. Filtros e paginação no admin (busca por nome/slug, status)

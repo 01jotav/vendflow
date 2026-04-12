@@ -8,6 +8,7 @@ import {
   Package,
   ShoppingBag,
   Wallet,
+  Crown,
   Webhook,
   ExternalLink,
   ChevronLeft,
@@ -22,6 +23,7 @@ const navItems = [
   { icon: Package,         label: "Produtos",      href: "/dashboard/produtos" },
   { icon: ShoppingBag,     label: "Pedidos",       href: "/dashboard/pedidos" },
   { icon: Wallet,          label: "Pagamentos",    href: "/dashboard/pagamentos" },
+  { icon: Crown,           label: "Assinatura",    href: "/dashboard/billing" },
   { icon: Webhook,         label: "Integrações",   href: "/dashboard/integracoes" },
 ];
 
