@@ -30,20 +30,42 @@ export async function POST(req: Request) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      const storeId = session.metadata?.storeId ?? session.client_reference_id;
-      if (!storeId) break;
+
+      // Tenta extrair storeId de múltiplas fontes (redundância)
+      const storeId =
+        session.client_reference_id
+        || session.metadata?.storeId
+        || null;
+
+      console.log("[Stripe Webhook] checkout.session.completed", {
+        client_reference_id: session.client_reference_id,
+        metadata: session.metadata,
+        customer: session.customer,
+        subscription: session.subscription,
+        storeId,
+      });
+
+      if (!storeId) {
+        console.error("[Stripe Webhook] storeId não encontrado no evento — ignorando");
+        break;
+      }
+
+      const customerId =
+        typeof session.customer === "string"
+          ? session.customer
+          : session.customer?.id ?? null;
 
       const subscriptionId =
         typeof session.subscription === "string"
           ? session.subscription
-          : session.subscription?.id;
+          : session.subscription?.id ?? null;
 
       await db.store.update({
         where: { id: storeId },
         data: {
           plan: "PRO",
-          stripeCustomerId: typeof session.customer === "string" ? session.customer : session.customer?.id,
-          stripeSubscriptionId: subscriptionId ?? undefined,
+          ...(customerId ? { stripeCustomerId: customerId } : {}),
+          ...(subscriptionId ? { stripeSubscriptionId: subscriptionId } : {}),
           stripePriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? undefined,
         },
       });

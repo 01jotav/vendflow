@@ -7,7 +7,7 @@ import { getStripe } from "@/lib/stripe";
  * POST /api/stripe/checkout
  * Cria uma Stripe Checkout Session para upgrade BASIC → PRO.
  */
-export async function POST() {
+export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.store?.id) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -46,15 +46,26 @@ export async function POST() {
     });
   }
 
-  const baseUrl = process.env.AUTH_URL ?? "http://localhost:3001";
+  // Resolve a URL base dinamicamente a partir do origin da request
+  const origin = req.headers.get("origin")
+    || req.headers.get("referer")?.replace(/\/[^/]*$/, "")
+    || process.env.NEXT_PUBLIC_APP_URL
+    || process.env.AUTH_URL;
+
+  if (!origin) {
+    return NextResponse.json({ error: "Não foi possível determinar a URL base" }, { status: 500 });
+  }
 
   const checkoutSession = await getStripe().checkout.sessions.create({
     customer: customerId,
     client_reference_id: store.id,
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${baseUrl}/dashboard/billing?success=true`,
-    cancel_url: `${baseUrl}/dashboard/billing?canceled=true`,
+    success_url: `${origin}/dashboard/billing?success=true`,
+    cancel_url: `${origin}/dashboard/billing?canceled=true`,
+    subscription_data: {
+      metadata: { storeId: store.id },
+    },
     metadata: { storeId: store.id },
   });
 
