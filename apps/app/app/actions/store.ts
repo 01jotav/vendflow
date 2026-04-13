@@ -35,6 +35,15 @@ export async function updateStoreAction(
   if (!parsed.success) return { message: "Dados inválidos" };
 
   const { logoUrl, whatsappNumber, ...rest } = parsed.data;
+
+  if (whatsappNumber) {
+    const existing = await db.store.findFirst({
+      where: { whatsappNumber, id: { not: session.user.store.id } },
+      select: { id: true },
+    });
+    if (existing) return { message: "Este número de WhatsApp já está em uso por outra loja." };
+  }
+
   await db.store.update({
     where: { id: session.user.store.id },
     data: { ...rest, logoUrl: logoUrl || null, whatsappNumber: whatsappNumber || null },

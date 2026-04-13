@@ -81,29 +81,26 @@ export default async function OrderPage({
               const orderCode = order.id.slice(-8).toUpperCase();
               const address = order.customer.address as { rua?: string; numero?: string; bairro?: string; cep?: string } | null;
               const itemsList = order.items
-                .map((item) => `• ${item.product.name} (x${item.quantity}) — ${formatBRL(item.price * item.quantity)}`)
+                .map((item) => `${item.quantity}x ${item.product.name} (${formatBRL(item.price * item.quantity)})`)
                 .join("\n");
+              const phone = order.customer.phone ? ` (${order.customer.phone})` : "";
+              const addressLine = address?.rua
+                ? `📍 *Endereço:* ${address.rua}${address.numero ? `, ${address.numero}` : ""}${address.bairro ? `, ${address.bairro}` : ""}${address.cep ? ` - ${address.cep}` : ""}`
+                : "";
               const msg = [
-                `Olá! Acabei de fazer o pedido *#${orderCode}* na loja *${store.name}*.`,
+                `🛍️ *Novo Pedido: #${orderCode}*`,
+                `🏪 *Loja:* ${store.name}`,
                 "",
-                `📦 *Itens do pedido:*`,
+                `📦 *Itens do Pedido:*`,
+                "",
                 itemsList,
                 "",
-                `💰 *Total:* ${formatBRL(order.total)}`,
+                `💰 *Total do Pedido:* ${formatBRL(order.total)}`,
                 "",
-                `👤 *Cliente:* ${order.customer.name}`,
-                order.customer.phone ? `📱 *Telefone:* ${order.customer.phone}` : "",
-                ...(address?.rua
-                  ? [
-                      "",
-                      `📍 *Endereço:*`,
-                      `${address.rua}${address.numero ? `, ${address.numero}` : ""}`,
-                      address.bairro ? `${address.bairro}` : "",
-                      address.cep ? `CEP: ${address.cep}` : "",
-                    ]
-                  : []),
+                `👤 *Cliente:* ${order.customer.name}${phone}`,
+                addressLine,
                 "",
-                "Gostaria de combinar o valor do frete e a entrega. 🚚",
+                `🚚 Olá! Gostaria de combinar o frete e a entrega deste pedido.`,
               ].filter(Boolean).join("\n");
 
               const waUrl = `https://wa.me/55${store.whatsappNumber}?text=${encodeURIComponent(msg)}`;
