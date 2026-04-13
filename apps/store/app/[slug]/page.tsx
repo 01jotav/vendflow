@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ShoppingBag, Truck, Shield, RefreshCw } from "lucide-react";
+import { ShoppingBag, MessageCircle, Shield, RefreshCw } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import ProductCard from "@/components/ProductCard";
@@ -33,9 +33,8 @@ export async function generateMetadata({
   }
 }
 
-// TODO: tornar configurável pelo lojista no painel (regras de frete, segurança, troca)
 const perks = [
-  { icon: Truck,     label: "Frete grátis acima de R$ 150" },
+  { icon: MessageCircle, label: "Frete: a combinar via WhatsApp" },
   { icon: Shield,    label: "Compra 100% segura" },
   { icon: RefreshCw, label: "Troca em até 7 dias" },
 ];

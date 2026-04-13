@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Share2, Truck, Shield, ArrowLeft, Check } from "lucide-react";
+import { Share2, MessageCircle, Shield, ArrowLeft, Check } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import ProductCard from "@/components/ProductCard";
@@ -157,7 +157,7 @@ export default async function ProductPage({
 
               <div className="mt-6 pt-5 border-t border-gray-100 space-y-2.5">
                 {[
-                  { icon: Truck,  text: "Frete grátis acima de R$ 150" },
+                  { icon: MessageCircle, text: "Frete: a combinar via WhatsApp" },
                   { icon: Shield, text: "Compra 100% segura — SSL" },
                   { icon: Check,  text: "Troca em até 7 dias" },
                 ].map(({ icon: Icon, text }) => (

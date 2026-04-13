@@ -5,6 +5,7 @@ import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import { buildStoreChrome, formatBRL } from "@/lib/store-chrome";
 import { getCurrentCustomer } from "@/lib/customer-auth";
+import OrderStatusPoller from "@/components/OrderStatusPoller";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,8 @@ export default async function OrderPage({
               <Icon className={`w-7 h-7 ${statusInfo.color}`} />
             </div>
             <h1 className="text-2xl font-extrabold text-gray-900 mb-1">{statusInfo.title}</h1>
-            <p className="text-sm text-gray-500 mb-6">{statusInfo.desc}</p>
+            <p className="text-sm text-gray-500 mb-2">{statusInfo.desc}</p>
+            <OrderStatusPoller orderId={order.id} initialStatus={order.status} />
 
             <div className="border-t border-gray-100 pt-5 mb-5">
               <p className="text-xs text-gray-400 mb-3">Pedido #{order.id.slice(-8).toUpperCase()}</p>

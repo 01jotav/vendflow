@@ -81,7 +81,7 @@ export default async function CartPage({ params }: { params: Promise<{ slug: str
                 </div>
                 <div className="flex justify-between text-sm text-gray-400 mb-4">
                   <span>Frete</span>
-                  <span>Calculado no checkout</span>
+                  <span>A combinar via WhatsApp</span>
                 </div>
                 <div className="border-t border-gray-100 pt-4 flex justify-between font-extrabold text-gray-900 mb-5">
                   <span>Total</span>

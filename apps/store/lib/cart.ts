@@ -25,6 +25,22 @@ export async function getOrCreateCart(customerId: string) {
   });
 }
 
+/**
+ * Versão leve do getOrCreateCart para operações de escrita (add/update).
+ * Retorna apenas o cart id e items com productId + quantity (sem joins pesados).
+ */
+export async function getOrCreateCartLite(customerId: string) {
+  const existing = await db.cart.findUnique({
+    where: { customerId },
+    select: { id: true, items: { select: { productId: true, quantity: true } } },
+  });
+  if (existing) return existing;
+  return db.cart.create({
+    data: { customerId },
+    select: { id: true, items: { select: { productId: true, quantity: true } } },
+  });
+}
+
 export async function getCartItemCount(customerId: string): Promise<number> {
   const items = await db.cartItem.findMany({
     where: { cart: { customerId } },

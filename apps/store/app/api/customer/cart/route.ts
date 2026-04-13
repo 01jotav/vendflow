@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@vendflow/database";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
-import { getOrCreateCart } from "@/lib/cart";
+import { getOrCreateCart, getOrCreateCartLite } from "@/lib/cart";
 
 async function getSession() {
   const token = (await cookies()).get("vf_customer_session")?.value;
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Produto de outra loja" }, { status: 403 });
   }
 
-  const cart = await getOrCreateCart(session.customerId);
+  const cart = await getOrCreateCartLite(session.customerId);
   const existing = cart.items.find((i) => i.productId === productId);
   const newQty = (existing?.quantity ?? 0) + qty;
   if (product.stock > 0 && newQty > product.stock) {
