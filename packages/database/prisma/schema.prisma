@@ -93,6 +93,7 @@ model Store {
   theme       StoreTheme  @default(MODERN)
   plan                  StorePlan   @default(BASIC)
   webhookUrl            String?
+  whatsappNumber        String?
   stripeCustomerId      String?     @unique
   stripeSubscriptionId  String?     @unique
   stripePriceId         String?

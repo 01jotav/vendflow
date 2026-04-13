@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Check, Save, ExternalLink, Copy } from "lucide-react";
+import { Check, Save, ExternalLink, Copy, MessageCircle } from "lucide-react";
 import clsx from "clsx";
 import { updateStoreAction } from "@/app/actions/store";
 import ImageUpload from "@/components/ui/ImageUpload";
@@ -26,6 +26,7 @@ interface Store {
   themeColor: string;
   theme: string;
   logoUrl: string | null;
+  whatsappNumber: string | null;
 }
 
 export default function LojaForm({ store }: { store: Store }) {
@@ -155,6 +156,36 @@ export default function LojaForm({ store }: { store: Store }) {
             label="Logo da loja"
             hint="Imagem quadrada recomendada. Máx. 5 MB."
           />
+        </div>
+
+        {/* WhatsApp */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900">WhatsApp da loja</h3>
+              <p className="text-xs text-gray-400">Seus clientes poderão combinar a entrega por WhatsApp após a compra.</p>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Número com DDD</label>
+            <div className="flex">
+              <span className="px-3 py-3 bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl text-sm text-gray-400 flex-shrink-0">
+                +55
+              </span>
+              <input
+                name="whatsappNumber"
+                type="tel"
+                defaultValue={store.whatsappNumber ?? ""}
+                placeholder="11 99999-0000"
+                maxLength={15}
+                className="flex-1 px-4 py-3 rounded-r-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all placeholder:text-gray-400"
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-1">Apenas números. Ex: 11999990000</p>
+          </div>
         </div>
 
         {/* Cor tema */}

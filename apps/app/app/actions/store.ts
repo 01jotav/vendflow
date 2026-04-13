@@ -11,6 +11,7 @@ const schema = z.object({
   themeColor:  z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#7c3aed"),
   theme:       z.enum(["MODERN", "YOUNG", "ELEGANT", "MINIMAL"]).default("MODERN"),
   logoUrl:     z.string().url().or(z.literal("")).optional(),
+  whatsappNumber: z.string().regex(/^\d{10,11}$/, "Número inválido").or(z.literal("")).optional(),
 });
 
 export type StoreState = { message?: string; success?: boolean };
@@ -28,14 +29,15 @@ export async function updateStoreAction(
     themeColor:  formData.get("themeColor"),
     theme:       formData.get("theme"),
     logoUrl:     formData.get("logoUrl") || "",
+    whatsappNumber: (formData.get("whatsappNumber") as string)?.replace(/\D/g, "") || "",
   });
 
   if (!parsed.success) return { message: "Dados inválidos" };
 
-  const { logoUrl, ...rest } = parsed.data;
+  const { logoUrl, whatsappNumber, ...rest } = parsed.data;
   await db.store.update({
     where: { id: session.user.store.id },
-    data: { ...rest, logoUrl: logoUrl || null },
+    data: { ...rest, logoUrl: logoUrl || null, whatsappNumber: whatsappNumber || null },
   });
 
   revalidatePath("/dashboard/loja");

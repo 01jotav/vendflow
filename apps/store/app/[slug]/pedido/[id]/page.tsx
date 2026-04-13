@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { db } from "@vendflow/database";
-import { Check, Clock, X } from "lucide-react";
+import { Check, Clock, X, MessageCircle } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import { buildStoreChrome, formatBRL } from "@/lib/store-chrome";
@@ -16,7 +16,7 @@ export default async function OrderPage({
   const { slug, id } = await params;
   const store = await db.store.findUnique({
     where: { slug },
-    select: { id: true, slug: true, name: true, description: true, themeColor: true, active: true },
+    select: { id: true, slug: true, name: true, description: true, themeColor: true, active: true, whatsappNumber: true },
   });
   if (!store || !store.active) notFound();
 
@@ -25,7 +25,7 @@ export default async function OrderPage({
 
   const order = await db.order.findUnique({
     where: { id },
-    include: { items: { include: { product: true } }, payment: true },
+    include: { items: { include: { product: true } }, payment: true, customer: true },
   });
   if (!order || order.customerId !== customer.id || order.storeId !== store.id) notFound();
 
@@ -74,9 +74,54 @@ export default async function OrderPage({
               <span>{formatBRL(order.total)}</span>
             </div>
 
+            {/* WhatsApp CTA */}
+            {store.whatsappNumber && order.status !== "CANCELLED" && (() => {
+              const orderCode = order.id.slice(-8).toUpperCase();
+              const address = order.customer.address as { rua?: string; numero?: string; bairro?: string; cep?: string } | null;
+              const itemsList = order.items
+                .map((item) => `• ${item.product.name} (x${item.quantity}) — ${formatBRL(item.price * item.quantity)}`)
+                .join("\n");
+              const msg = [
+                `Olá! Acabei de fazer o pedido *#${orderCode}* na loja *${store.name}*.`,
+                "",
+                `📦 *Itens do pedido:*`,
+                itemsList,
+                "",
+                `💰 *Total:* ${formatBRL(order.total)}`,
+                "",
+                `👤 *Cliente:* ${order.customer.name}`,
+                order.customer.phone ? `📱 *Telefone:* ${order.customer.phone}` : "",
+                ...(address?.rua
+                  ? [
+                      "",
+                      `📍 *Endereço:*`,
+                      `${address.rua}${address.numero ? `, ${address.numero}` : ""}`,
+                      address.bairro ? `${address.bairro}` : "",
+                      address.cep ? `CEP: ${address.cep}` : "",
+                    ]
+                  : []),
+                "",
+                "Gostaria de combinar o valor do frete e a entrega. 🚚",
+              ].filter(Boolean).join("\n");
+
+              const waUrl = `https://wa.me/55${store.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+
+              return (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 mt-4 py-3.5 rounded-xl bg-[#25D366] text-white font-bold text-sm hover:bg-[#1ebe57] transition-colors shadow-lg shadow-[#25D366]/30"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Finalizar entrega via WhatsApp
+                </a>
+              );
+            })()}
+
             <a
               href={`/${store.slug}`}
-              className="block text-center mt-6 py-3 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+              className="block text-center mt-3 py-3 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity"
               style={{ backgroundColor: store.themeColor }}
             >
               Voltar para a loja

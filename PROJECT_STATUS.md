@@ -278,7 +278,7 @@ Nenhum reportado.
 ### Infraestrutura
 7. **Email transacional** — zero notificações (confirmação, status, boas-vindas)
 8. ~~**Upload de imagens**~~ ✅ Presigned URLs via Cloudflare R2 (produtos + logo da loja)
-9. **Shipping hardcoded** — "Frete grátis acima de R$150" não é configurável pelo lojista
+9. ~~**Shipping hardcoded**~~ ✅ Frete negociado via WhatsApp (lojista cadastra número, cliente combina entrega após compra)
 10. **Testes** — zero cobertura (unit, integration, e2e)
 11. **Observability** — sem Sentry, sem logs estruturados, sem analytics
 
@@ -296,12 +296,12 @@ Nenhum reportado.
 ### Prioridade média (pós-launch)
 6. Filtros e paginação no admin (busca por nome/slug, status)
 7. Gráficos com recharts no `/admin`
-8. Shipping configurável pelo lojista
+8. ~~Shipping configurável pelo lojista~~ ✅ — Frete via WhatsApp (logística manual)
 9. Mais eventos de webhook (order.shipped, order.cancelled, etc.)
 
 ### Prioridade baixa (futuro)
 10. Email transacional (Resend ou Nodemailer + templates)
-11. WhatsApp automation (via n8n + webhook do Vendflow)
+11. ~~WhatsApp automation~~ ✅ — Fluxo de fechamento via wa.me com mensagem pré-formatada
 12. Guest checkout (hoje obriga criar conta)
 13. Cron jobs (carrinho abandonado, relatórios)
 14. Testes automatizados
