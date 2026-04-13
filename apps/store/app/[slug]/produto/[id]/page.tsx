@@ -6,6 +6,7 @@ import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import ProductCard from "@/components/ProductCard";
 import AddToCartButton from "@/components/AddToCartButton";
+import { CartCountProvider } from "@/components/CartCountProvider";
 import { buildStoreChrome, formatBRL } from "@/lib/store-chrome";
 import { getCurrentCustomer } from "@/lib/customer-auth";
 import { getCartItemCount } from "@/lib/cart";
@@ -75,7 +76,7 @@ export default async function ProductPage({
   const cartCount = customer ? await getCartItemCount(customer.id) : 0;
 
   return (
-    <>
+    <CartCountProvider initial={cartCount}>
       <StoreHeader store={header} cartCount={cartCount} isLoggedIn={!!customer} />
 
       <main className="pt-16">
@@ -197,6 +198,6 @@ export default async function ProductPage({
       </main>
 
       <StoreFooter store={footer} />
-    </>
+    </CartCountProvider>
   );
 }

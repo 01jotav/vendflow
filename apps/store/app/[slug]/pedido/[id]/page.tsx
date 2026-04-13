@@ -1,11 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import { db } from "@vendflow/database";
-import { Check, Clock, X, MessageCircle } from "lucide-react";
+import { Check, Clock, X } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import { buildStoreChrome, formatBRL } from "@/lib/store-chrome";
 import { getCurrentCustomer } from "@/lib/customer-auth";
 import OrderStatusPoller from "@/components/OrderStatusPoller";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 export const dynamic = "force-dynamic";
 
@@ -77,46 +78,22 @@ export default async function OrderPage({
             </div>
 
             {/* WhatsApp CTA */}
-            {store.whatsappNumber && order.status !== "CANCELLED" && (() => {
-              const orderCode = order.id.slice(-8).toUpperCase();
-              const address = order.customer.address as { rua?: string; numero?: string; bairro?: string; cep?: string } | null;
-              const itemsList = order.items
-                .map((item) => `${item.quantity}x ${item.product.name} (${formatBRL(item.price * item.quantity)})`)
-                .join("\n");
-              const phone = order.customer.phone ? ` (${order.customer.phone})` : "";
-              const addressLine = address?.rua
-                ? `📍 *Endereço:* ${address.rua}${address.numero ? `, ${address.numero}` : ""}${address.bairro ? `, ${address.bairro}` : ""}${address.cep ? ` - ${address.cep}` : ""}`
-                : "";
-              const msg = [
-                `🛍️ *Novo Pedido: #${orderCode}*`,
-                `🏪 *Loja:* ${store.name}`,
-                "",
-                `📦 *Itens do Pedido:*`,
-                "",
-                itemsList,
-                "",
-                `💰 *Total do Pedido:* ${formatBRL(order.total)}`,
-                "",
-                `👤 *Cliente:* ${order.customer.name}${phone}`,
-                addressLine,
-                "",
-                `🚚 Olá! Gostaria de combinar o frete e a entrega deste pedido.`,
-              ].filter(Boolean).join("\n");
-
-              const waUrl = `https://wa.me/55${store.whatsappNumber}?text=${encodeURIComponent(msg)}`;
-
-              return (
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-center gap-2 mt-4 py-3.5 rounded-xl bg-[#25D366] text-white font-bold text-sm hover:bg-[#1ebe57] transition-colors shadow-lg shadow-[#25D366]/30"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Finalizar entrega via WhatsApp
-                </a>
-              );
-            })()}
+            {store.whatsappNumber && order.status !== "CANCELLED" && (
+              <WhatsAppButton
+                whatsappNumber={store.whatsappNumber}
+                storeName={store.name}
+                orderCode={order.id.slice(-8).toUpperCase()}
+                total={order.total}
+                customerName={order.customer.name}
+                customerPhone={order.customer.phone}
+                address={order.customer.address as { rua?: string; numero?: string; bairro?: string; cep?: string } | null}
+                items={order.items.map((item) => ({
+                  quantity: item.quantity,
+                  price: item.price,
+                  product: { name: item.product.name },
+                }))}
+              />
+            )}
 
             <a
               href={`/${store.slug}`}

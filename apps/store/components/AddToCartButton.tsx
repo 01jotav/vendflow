@@ -3,6 +3,7 @@
 import { useState, useOptimistic, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, Check } from "lucide-react";
+import { useCartCount } from "@/components/CartCountProvider";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -16,6 +17,7 @@ export default function AddToCartButton({
   productId, storeSlug, themeColor, stock, isLoggedIn,
 }: AddToCartButtonProps) {
   const router = useRouter();
+  const { increment } = useCartCount();
   const [, startTransition] = useTransition();
   const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +32,10 @@ export default function AddToCartButton({
       return;
     }
 
-    // Optimistic: show "Adicionado!" immediately
+    // Optimistic: show "Adicionado!" and update header badge immediately
     startTransition(() => setOptimisticAdding(true));
     setAdded(true);
+    increment(1);
 
     try {
       const res = await fetch("/api/customer/cart", {

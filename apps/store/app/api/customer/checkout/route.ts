@@ -95,12 +95,10 @@ export async function POST() {
           phone: customer.phone ? { number: customer.phone } : undefined,
         },
         external_reference: order.id,
-        // MP exige URLs públicas — em dev (localhost) omitimos back_urls/auto_return/notification_url
-        ...(isLocal ? {} : {
-          back_urls: { success: backUrl, pending: backUrl, failure: backUrl },
-          auto_return: "approved",
-          notification_url: webhookUrl,
-        }),
+        back_urls: { success: backUrl, pending: backUrl, failure: backUrl },
+        auto_return: "approved",
+        // MP exige URLs públicas para notification_url — em dev (localhost) omitimos
+        ...(isLocal ? {} : { notification_url: webhookUrl }),
         metadata: { orderId: order.id, storeId: store.id },
       },
     });

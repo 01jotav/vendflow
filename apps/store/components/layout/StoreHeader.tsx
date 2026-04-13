@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
 import clsx from "clsx";
+import { useCartCount } from "@/components/CartCountProvider";
 
 export interface StoreHeaderData {
   slug: string;
@@ -18,7 +19,9 @@ interface StoreHeaderProps {
   isLoggedIn?: boolean;
 }
 
-export default function StoreHeader({ store, categories = [], cartCount = 0, isLoggedIn = false }: StoreHeaderProps) {
+export default function StoreHeader({ store, categories = [], cartCount: propCount = 0, isLoggedIn = false }: StoreHeaderProps) {
+  const { count: ctxCount } = useCartCount();
+  const cartCount = ctxCount ?? propCount;
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
