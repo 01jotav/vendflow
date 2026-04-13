@@ -23,14 +23,25 @@ export async function POST() {
 
   // Carrega customer + loja + config MP + carrinho
   const [customer, store, cart] = await Promise.all([
-    db.customer.findUnique({ where: { id: session.customerId } }),
+    db.customer.findUnique({
+      where: { id: session.customerId },
+      select: { id: true, name: true, email: true, phone: true },
+    }),
     db.store.findUnique({
       where: { id: session.storeId },
-      include: { mercadoPago: true },
+      select: { id: true, slug: true, name: true, mercadoPago: { select: { accessToken: true } } },
     }),
     db.cart.findUnique({
       where: { customerId: session.customerId },
-      include: { items: { include: { product: true } } },
+      select: {
+        items: {
+          select: {
+            productId: true,
+            quantity: true,
+            product: { select: { name: true, price: true, stock: true } },
+          },
+        },
+      },
     }),
   ]);
 
@@ -76,7 +87,7 @@ export async function POST() {
   const backUrl = `${storeBase}/${store.slug}/pedido/${order.id}`;
   const webhookUrl = `${storeBase}/api/mercadopago/webhook?storeId=${store.id}`;
 
-  const mpClient = new MercadoPagoConfig({ accessToken: store.mercadoPago.accessToken });
+  const mpClient = new MercadoPagoConfig({ accessToken: store.mercadoPago!.accessToken });
   const preference = new Preference(mpClient);
 
   try {

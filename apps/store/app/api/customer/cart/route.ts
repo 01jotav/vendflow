@@ -63,7 +63,7 @@ export async function PATCH(req: Request) {
 
   const item = await db.cartItem.findUnique({
     where: { id: itemId },
-    include: { cart: { select: { customerId: true } }, product: { select: { stock: true } } },
+    select: { id: true, cart: { select: { customerId: true } }, product: { select: { stock: true } } },
   });
   if (!item || item.cart.customerId !== session.customerId) {
     return NextResponse.json({ error: "Item não encontrado" }, { status: 404 });
@@ -90,7 +90,7 @@ export async function DELETE(req: Request) {
 
   const item = await db.cartItem.findUnique({
     where: { id: itemId },
-    include: { cart: { select: { customerId: true } } },
+    select: { id: true, cart: { select: { customerId: true } } },
   });
   if (!item || item.cart.customerId !== session.customerId) {
     return NextResponse.json({ error: "Item não encontrado" }, { status: 404 });

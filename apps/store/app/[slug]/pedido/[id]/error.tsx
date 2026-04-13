@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { FileText } from "lucide-react";
 
-export default function Error({
+export default function PedidoError({
   error,
   reset,
 }: {
@@ -14,13 +15,15 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6 text-center">
+    <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 text-center">
       <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mb-4">
-        <span className="text-2xl">{"\u26A0\uFE0F"}</span>
+        <FileText className="w-7 h-7 text-red-400" />
       </div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Algo deu errado</h2>
+      <h2 className="text-lg font-bold text-gray-900 mb-1">
+        Erro ao carregar o pedido
+      </h2>
       <p className="text-sm text-gray-500 max-w-md mb-5">
-        Pode ter sido um problema temporário. Tente novamente.
+        Não foi possível exibir os detalhes deste pedido. Tente novamente.
       </p>
       <button
         onClick={reset}

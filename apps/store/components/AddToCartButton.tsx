@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useOptimistic, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, Check } from "lucide-react";
+import { ShoppingBag, Loader2, Check } from "lucide-react";
 import { useCartCount } from "@/components/CartCountProvider";
 
 interface AddToCartButtonProps {
@@ -18,12 +18,10 @@ export default function AddToCartButton({
 }: AddToCartButtonProps) {
   const router = useRouter();
   const { increment } = useCartCount();
-  const [, startTransition] = useTransition();
-  const [added, setAdded] = useState(false);
+  const [state, setState] = useState<"idle" | "loading" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
-  const [optimisticAdding, setOptimisticAdding] = useOptimistic(false);
 
-  const disabled = stock === 0;
+  const outOfStock = stock === 0;
 
   async function onClick() {
     setError(null);
@@ -32,10 +30,7 @@ export default function AddToCartButton({
       return;
     }
 
-    // Optimistic: show "Adicionado!" and update header badge immediately
-    startTransition(() => setOptimisticAdding(true));
-    setAdded(true);
-    increment(1);
+    setState("loading");
 
     try {
       const res = await fetch("/api/customer/cart", {
@@ -46,34 +41,33 @@ export default function AddToCartButton({
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setAdded(false);
+        setState("idle");
         setError(data.error ?? "Erro ao adicionar");
         return;
       }
 
-      // Refresh to update cart count in header
-      setTimeout(() => {
-        setAdded(false);
-        startTransition(() => router.refresh());
-      }, 1200);
+      // Servidor confirmou — agora atualiza badge e mostra feedback
+      increment(1);
+      setState("done");
+      setTimeout(() => setState("idle"), 1500);
     } catch {
-      setAdded(false);
+      setState("idle");
       setError("Erro de conexão");
     }
   }
-
-  const showAdded = added || optimisticAdding;
 
   return (
     <div className="flex-1">
       <button
         onClick={onClick}
-        disabled={disabled || showAdded}
+        disabled={outOfStock || state !== "idle"}
         className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
         style={{ backgroundColor: themeColor }}
       >
-        {showAdded ? <Check className="w-5 h-5" /> : <ShoppingBag className="w-5 h-5" />}
-        {disabled ? "Esgotado" : showAdded ? "Adicionado!" : "Adicionar ao carrinho"}
+        {state === "loading" && <Loader2 className="w-5 h-5 animate-spin" />}
+        {state === "done" && <Check className="w-5 h-5" />}
+        {state === "idle" && <ShoppingBag className="w-5 h-5" />}
+        {outOfStock ? "Esgotado" : state === "loading" ? "Adicionando..." : state === "done" ? "Adicionado!" : "Adicionar ao carrinho"}
       </button>
       {error && <p className="text-xs text-red-500 mt-2 text-center">{error}</p>}
     </div>

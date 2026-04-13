@@ -214,6 +214,14 @@ Localização: [packages/database/prisma/schema.prisma](packages/database/prisma
 - **Segurança**: só dispara para lojas com `plan === "PRO"` e `webhookUrl` configurada
 - **UI PRO gate**: campo desabilitado com aviso "Disponível apenas no plano PRO" para lojas BASIC
 
+### 5.9 Sprint de Performance e Estabilidade (sessão atual)
+- **Prisma selects cirúrgicos**: todas as queries de cart, checkout, webhook convertidas de `include` para `select` — só busca os campos necessários
+- **N+1 eliminado**: loop de `db.product.update` no webhook convertido para `Promise.all`
+- **AddToCartButton refatorado**: removido `useOptimistic`, agora usa máquina de estados (`idle→loading→done→idle`) com feedback real do servidor antes de incrementar badge
+- **CartCountProvider**: React Context compartilha contagem entre Header e botões, `increment()` só após confirmação do servidor
+- **Error Boundaries**: `error.tsx` com botão `reset()` em `/carrinho`, `/produto/[id]`, `/pedido/[id]` e raiz `[slug]`
+- **Suspense Skeletons**: `loading.tsx` com skeletons animados contextuais (carrinho mostra items, produto mostra imagem+texto, pedido mostra status+items)
+
 ---
 
 ## 6. Variáveis de ambiente
@@ -247,17 +255,14 @@ NEXT_PUBLIC_APP_URL="https://vendflow-app.vercel.app"
 
 ## 7. Onde parou
 
-### Último commit
-`5cddf18 feat: order status state machine with stock restoration on cancellation`
-
 ### Estado atual
-- ✅ Código pushed pra `origin/main`
 - ✅ Build local passando (apps/app + apps/store)
-- ✅ Performance otimizada: índices, paginação, cache, queries paralelas
+- ✅ Performance otimizada: Prisma selects cirúrgicos, N+1 eliminados, queries paralelas
 - ✅ Schema formalizado via migration baseline
 - ✅ Seed script de admin user funcional
 - ✅ Webhook do Mercado Pago blindado com verificação HMAC-SHA256 e mapeamento O(1) de store
-- ✅ Sidebar/skeleton validados em produção
+- ✅ Error Boundaries + Suspense Skeletons em todas as sub-rotas do store
+- ✅ AddToCartButton sem UI otimista — feedback real do servidor
 - ✅ `.env.local` não está no git (já estava no `.gitignore`)
 
 ### Bugs conhecidos

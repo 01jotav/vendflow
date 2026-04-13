@@ -3,26 +3,23 @@ import { db } from "@vendflow/database";
 /**
  * Retorna o carrinho do customer (criando se não existir) com itens + produto.
  */
+const cartSelect = {
+  id: true,
+  items: {
+    select: {
+      id: true,
+      productId: true,
+      quantity: true,
+      product: { select: { name: true, price: true, images: true, stock: true } },
+    },
+    orderBy: { id: "asc" as const },
+  },
+};
+
 export async function getOrCreateCart(customerId: string) {
-  const existing = await db.cart.findUnique({
-    where: { customerId },
-    include: {
-      items: {
-        include: { product: { include: { store: { select: { slug: true, themeColor: true } } } } },
-        orderBy: { id: "asc" },
-      },
-    },
-  });
+  const existing = await db.cart.findUnique({ where: { customerId }, select: cartSelect });
   if (existing) return existing;
-  return db.cart.create({
-    data: { customerId },
-    include: {
-      items: {
-        include: { product: { include: { store: { select: { slug: true, themeColor: true } } } } },
-        orderBy: { id: "asc" },
-      },
-    },
-  });
+  return db.cart.create({ data: { customerId }, select: cartSelect });
 }
 
 /**

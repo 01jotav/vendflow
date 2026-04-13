@@ -163,13 +163,15 @@ export async function POST(req: Request) {
       },
     });
     if (fullOrder) {
-      await db.cart.deleteMany({ where: { customerId: fullOrder.customer.id } });
-      for (const item of fullOrder.items) {
-        await db.product.update({
-          where: { id: item.productId },
-          data: { stock: { decrement: item.quantity } },
-        });
-      }
+      await Promise.all([
+        db.cart.deleteMany({ where: { customerId: fullOrder.customer.id } }),
+        ...fullOrder.items.map((item) =>
+          db.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          })
+        ),
+      ]);
 
       // 8. Disparar webhook externo (fire-and-forget)
       dispatchOrderEvent(order.storeId, "order.paid", {
