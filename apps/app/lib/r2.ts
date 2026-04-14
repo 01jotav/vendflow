@@ -7,28 +7,35 @@ let _r2: S3Client | null = null;
 function getR2(): S3Client {
   if (_r2) return _r2;
 
-  const accountId = process.env.R2_ACCOUNT_ID;
+  const endpoint = process.env.R2_ENDPOINT;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-
   const publicUrl = process.env.R2_PUBLIC_URL;
 
-  if (!accountId || !accessKeyId || !secretAccessKey || !publicUrl) {
+  if (!endpoint || !accessKeyId || !secretAccessKey || !publicUrl) {
     throw new Error(
-      "Credenciais R2 não configuradas. Defina R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY e R2_PUBLIC_URL no .env"
+      "Credenciais R2 não configuradas. Defina R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY e R2_PUBLIC_URL no .env"
     );
   }
 
   _r2 = new S3Client({
     region: "auto",
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    endpoint,
     credentials: { accessKeyId, secretAccessKey },
   });
   return _r2;
 }
 
-const BUCKET = process.env.R2_BUCKET_NAME ?? "vendflow";
-const PUBLIC_URL = process.env.R2_PUBLIC_URL ?? "";
+function getBucket(): string {
+  const bucket = process.env.R2_BUCKET_NAME;
+  if (!bucket) throw new Error("R2_BUCKET_NAME não configurado no .env");
+  return bucket;
+}
+
+function getPublicUrl(): string {
+  // Remove barra final para evitar dupla barra ao concatenar
+  return (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, "");
+}
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
@@ -54,7 +61,7 @@ export async function createPresignedUpload(opts: {
   const key = `${opts.folder}/${opts.storeId}/${randomUUID()}.${ext}`;
 
   const command = new PutObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
     ContentType: opts.contentType,
     ContentLength: opts.contentLength,
@@ -64,7 +71,7 @@ export async function createPresignedUpload(opts: {
 
   return {
     uploadUrl,
-    publicUrl: `${PUBLIC_URL}/${key}`,
+    publicUrl: `${getPublicUrl()}/${key}`,
     key,
   };
 }
