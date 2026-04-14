@@ -28,31 +28,39 @@ export default function ProductCard({
   return (
     <a
       href={`/${storeSlug}/produto/${product.id}`}
-      className="group bg-white rounded-2xl border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all overflow-hidden"
+      className="group bg-white rounded-2xl shadow-sm hover:shadow-lg border border-gray-100/80 hover:border-gray-200 transition-all duration-300 overflow-hidden"
     >
-      <div className="h-36 sm:h-44 bg-gray-100 relative">
+      <div className="aspect-square bg-gray-50 relative overflow-hidden">
         {product.images[0] ? (
           <Image
             src={product.images[0]}
             alt={product.name}
             fill
             sizes={sizes}
-            className="object-cover"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
-        ) : null}
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-300 text-lg">📷</span>
+            </div>
+          </div>
+        )}
         {showSoldOut && product.stock === 0 && (
-          <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-            <span className="text-xs font-bold text-gray-500 bg-white px-2 py-1 rounded-full border">
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center">
+            <span className="text-xs font-bold text-gray-600 bg-white/90 px-3 py-1.5 rounded-full shadow-sm">
               Esgotado
             </span>
           </div>
         )}
       </div>
-      <div className="p-3">
+      <div className="p-3.5">
         {showCategory && product.category && (
-          <p className="text-xs text-gray-400 mb-0.5">{product.category.name}</p>
+          <p className="text-[11px] uppercase tracking-wider font-semibold mb-1" style={{ color: themeColor }}>
+            {product.category.name}
+          </p>
         )}
-        <p className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1.5">{product.name}</p>
+        <p className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2 leading-snug">{product.name}</p>
         <p className="text-base font-extrabold" style={{ color: themeColor }}>
           {formatBRL(product.price)}
         </p>

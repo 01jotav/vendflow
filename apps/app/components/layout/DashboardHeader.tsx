@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  Bell, Menu, X, Search, Zap, LayoutDashboard, Store,
+  Menu, X, Search, Zap, LayoutDashboard, Store,
   Package, ShoppingBag, LogOut, ChevronDown,
 } from "lucide-react";
 import clsx from "clsx";
@@ -53,11 +53,6 @@ export default function DashboardHeader({ title, currentPath, user }: DashboardH
           <button className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 text-gray-400 text-sm hover:bg-gray-100 transition-colors">
             <Search className="w-4 h-4" />
             <span>Buscar...</span>
-          </button>
-
-          <button className="relative p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-500 rounded-full" />
           </button>
 
           {/* Avatar + menu do usuário */}

@@ -24,12 +24,17 @@ export default function StoreFooter({ store }: { store: StoreFooterData }) {
 
         <div className="border-t border-gray-200 mt-6 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-400">
           <p>© {new Date().getFullYear()} {store.name}. Todos os direitos reservados.</p>
-          <p>
+          <a
+            href="https://wa.me/5551992148242?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20como%20criar%20uma%20loja%20com%20o%20Vendflow."
+            target="_blank"
+            rel="noreferrer"
+            className="hover:opacity-80 transition-opacity"
+          >
             Loja criada com{" "}
             <span className="font-semibold" style={{ color: store.themeColor }}>
               Vendflow
             </span>
-          </p>
+          </a>
         </div>
       </div>
     </footer>

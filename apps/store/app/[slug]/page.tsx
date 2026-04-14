@@ -69,26 +69,26 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
       <main className="pt-16">
         <section
-          className="relative overflow-hidden py-16 sm:py-24"
-          style={{ background: `linear-gradient(135deg, ${store.themeColor}15 0%, ${store.themeColor}05 100%)` }}
+          className="relative overflow-hidden py-14 sm:py-24"
+          style={{ background: `linear-gradient(160deg, ${store.themeColor}12 0%, ${store.themeColor}04 60%, transparent 100%)` }}
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
             <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold text-white mb-6"
-              style={{ backgroundColor: store.themeColor }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold text-white mb-5 shadow-lg"
+              style={{ backgroundColor: store.themeColor, boxShadow: `0 4px 14px ${store.themeColor}40` }}
             >
-              <span>✨</span> Bem-vindo(a)
+              {"\u2728"} Bem-vindo(a)
             </div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
               {store.name}
             </h1>
             {store.description && (
-              <p className="text-lg text-gray-500 max-w-xl mx-auto mb-8">{store.description}</p>
+              <p className="text-base sm:text-lg text-gray-500 max-w-xl mx-auto mb-8">{store.description}</p>
             )}
             <a
               href="#produtos"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-white font-semibold text-sm shadow-xl hover:opacity-90 hover:scale-105 transition-all"
-              style={{ backgroundColor: store.themeColor }}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-white font-semibold text-sm shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+              style={{ backgroundColor: store.themeColor, boxShadow: `0 8px 24px ${store.themeColor}30` }}
             >
               <ShoppingBag className="w-4 h-4" />
               Ver todos os produtos
@@ -96,31 +96,41 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
           </div>
         </section>
 
-        <section className="border-y border-gray-100 bg-gray-50">
+        <section className="border-y border-gray-100 bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="flex items-center justify-center gap-6 sm:gap-10 overflow-x-auto">
               {perks.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center justify-center gap-2 text-center">
-                  <Icon className="w-4 h-4 flex-shrink-0" style={{ color: store.themeColor }} />
-                  <span className="text-xs sm:text-sm text-gray-600 font-medium">{label}</span>
+                <div key={label} className="flex items-center gap-2 shrink-0">
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${store.themeColor}12` }}>
+                    <Icon className="w-3.5 h-3.5" style={{ color: store.themeColor }} />
+                  </div>
+                  <span className="text-xs sm:text-sm text-gray-600 font-medium whitespace-nowrap">{label}</span>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="produtos" className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <section id="produtos" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-extrabold text-gray-900">Todos os produtos</h2>
-            <span className="text-sm text-gray-400">{store.products.length} produtos</span>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Todos os produtos</h2>
+            <span className="text-xs sm:text-sm text-gray-400 bg-gray-100 px-3 py-1 rounded-full font-medium">
+              {store.products.length} {store.products.length === 1 ? "produto" : "produtos"}
+            </span>
           </div>
 
           {store.products.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <p className="text-sm">Esta loja ainda não tem produtos cadastrados.</p>
+            <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="w-7 h-7 text-gray-300" />
+              </div>
+              <p className="text-base font-semibold text-gray-700 mb-1">Nenhum produto ainda</p>
+              <p className="text-sm text-gray-400 max-w-xs mx-auto">
+                Esta loja está se preparando. Volte em breve para conferir as novidades!
+              </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
               {store.products.map((product) => (
                 <ProductCard
                   key={product.id}

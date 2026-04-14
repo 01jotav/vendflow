@@ -34,12 +34,13 @@ export default async function OrderPage({
   const { header, footer } = buildStoreChrome(store);
 
   const statusInfo = {
-    PENDING:    { icon: Clock, color: "text-amber-600",  bg: "bg-amber-50",  title: "Aguardando pagamento", desc: "Assim que o pagamento for confirmado você será notificado." },
-    PAID:       { icon: Check, color: "text-green-600",  bg: "bg-green-50",  title: "Pagamento aprovado!",   desc: "Seu pedido foi confirmado e será preparado em breve." },
-    PROCESSING: { icon: Clock, color: "text-blue-600",   bg: "bg-blue-50",   title: "Em preparação",         desc: "A loja está preparando seu pedido." },
-    SHIPPED:    { icon: Clock, color: "text-blue-600",   bg: "bg-blue-50",   title: "Enviado",                desc: "Seu pedido foi enviado." },
-    DELIVERED:  { icon: Check, color: "text-green-600",  bg: "bg-green-50",  title: "Entregue",               desc: "Pedido entregue com sucesso." },
-    CANCELLED:  { icon: X,     color: "text-red-600",    bg: "bg-red-50",    title: "Pagamento não aprovado", desc: "O pagamento foi recusado ou cancelado." },
+    PENDING:        { icon: Clock, color: "text-amber-600",  bg: "bg-amber-50",  title: "Aguardando pagamento", desc: "Assim que o pagamento for confirmado você será notificado." },
+    PAID:           { icon: Check, color: "text-green-600",  bg: "bg-green-50",  title: "Pagamento aprovado!",   desc: "Seu pedido foi confirmado e será preparado em breve." },
+    MANUAL_PAYMENT: { icon: Check, color: "text-teal-600",   bg: "bg-teal-50",   title: "Pagamento confirmado!", desc: "Seu pedido foi confirmado pelo lojista e será preparado em breve." },
+    PROCESSING:     { icon: Clock, color: "text-blue-600",   bg: "bg-blue-50",   title: "Em preparação",         desc: "A loja está preparando seu pedido." },
+    SHIPPED:        { icon: Clock, color: "text-blue-600",   bg: "bg-blue-50",   title: "Enviado",                desc: "Seu pedido foi enviado." },
+    DELIVERED:      { icon: Check, color: "text-green-600",  bg: "bg-green-50",  title: "Entregue",               desc: "Pedido entregue com sucesso." },
+    CANCELLED:      { icon: X,     color: "text-red-600",    bg: "bg-red-50",    title: "Pagamento não aprovado", desc: "O pagamento foi recusado ou cancelado." },
   }[order.status];
 
   const Icon = statusInfo.icon;

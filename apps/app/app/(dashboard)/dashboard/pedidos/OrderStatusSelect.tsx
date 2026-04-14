@@ -4,22 +4,27 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
-  PENDING:    { label: "Pendente",    color: "bg-yellow-100 text-yellow-700" },
-  PAID:       { label: "Pago",        color: "bg-green-100 text-green-700" },
-  PROCESSING: { label: "Processando", color: "bg-purple-100 text-purple-700" },
-  SHIPPED:    { label: "Enviado",     color: "bg-blue-100 text-blue-700" },
-  DELIVERED:  { label: "Entregue",    color: "bg-gray-100 text-gray-600" },
-  CANCELLED:  { label: "Cancelado",   color: "bg-red-100 text-red-600" },
+  PENDING:        { label: "Pendente",       color: "bg-yellow-100 text-yellow-700" },
+  PAID:           { label: "Pago",           color: "bg-green-100 text-green-700" },
+  MANUAL_PAYMENT: { label: "Pago por fora",  color: "bg-teal-100 text-teal-700" },
+  PROCESSING:     { label: "Processando",    color: "bg-purple-100 text-purple-700" },
+  SHIPPED:        { label: "Enviado",        color: "bg-blue-100 text-blue-700" },
+  DELIVERED:      { label: "Entregue",       color: "bg-gray-100 text-gray-600" },
+  CANCELLED:      { label: "Cancelado",      color: "bg-red-100 text-red-600" },
 };
 
-/** Transições válidas — espelha VALID_TRANSITIONS de order-status.ts */
+/**
+ * Transições manuais válidas — espelha VALID_TRANSITIONS de order-status.ts.
+ * PAID nunca é opção manual (exclusivo do webhook de pagamento).
+ */
 const TRANSITIONS: Record<string, string[]> = {
-  PENDING:    ["CANCELLED"],
-  PAID:       ["PROCESSING", "CANCELLED"],
-  PROCESSING: ["SHIPPED", "CANCELLED"],
-  SHIPPED:    ["DELIVERED"],
-  DELIVERED:  [],
-  CANCELLED:  [],
+  PENDING:        ["MANUAL_PAYMENT", "CANCELLED"],
+  PAID:           ["PROCESSING", "CANCELLED"],
+  MANUAL_PAYMENT: ["PROCESSING", "CANCELLED"],
+  PROCESSING:     ["SHIPPED", "CANCELLED"],
+  SHIPPED:        ["DELIVERED"],
+  DELIVERED:      [],
+  CANCELLED:      [],
 };
 
 interface Props {

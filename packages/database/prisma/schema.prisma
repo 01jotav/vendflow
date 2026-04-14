@@ -266,6 +266,7 @@ model Order {
 enum OrderStatus {
   PENDING
   PAID
+  MANUAL_PAYMENT
   PROCESSING
   SHIPPED
   DELIVERED

@@ -41,19 +41,23 @@ export default async function CartPage({ params }: { params: Promise<{ slug: str
           <h1 className="text-2xl font-extrabold text-gray-900 mb-6">Meu carrinho</h1>
 
           {cart.items.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-              <ShoppingBag className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500 mb-4">Seu carrinho está vazio.</p>
+            <div className="bg-white rounded-3xl border border-dashed border-gray-200 p-12 sm:p-16 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="w-7 h-7 text-gray-300" />
+              </div>
+              <p className="text-base font-semibold text-gray-700 mb-1">Seu carrinho está vazio</p>
+              <p className="text-sm text-gray-400 mb-6">Que tal dar uma olhada nos nossos produtos?</p>
               <a
                 href={`/${store.slug}`}
-                className="inline-block px-5 py-2.5 rounded-xl text-white text-sm font-semibold"
-                style={{ backgroundColor: store.themeColor }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                style={{ backgroundColor: store.themeColor, boxShadow: `0 4px 14px ${store.themeColor}30` }}
               >
+                <ShoppingBag className="w-4 h-4" />
                 Ver produtos
               </a>
             </div>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid lg:grid-cols-3 gap-5">
               <div className="lg:col-span-2 space-y-3">
                 {cart.items.map((item) => (
                   <CartItemRow
@@ -73,7 +77,7 @@ export default async function CartPage({ params }: { params: Promise<{ slug: str
                 ))}
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 h-fit">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100/80 p-6 h-fit">
                 <h2 className="font-bold text-gray-900 mb-4">Resumo</h2>
                 <div className="flex justify-between text-sm text-gray-600 mb-2">
                   <span>Subtotal</span>

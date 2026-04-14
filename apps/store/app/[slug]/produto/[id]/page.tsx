@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Share2, MessageCircle, Shield, ArrowLeft, Check } from "lucide-react";
+import { MessageCircle, Shield, ArrowLeft, Check } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
 import ProductCard from "@/components/ProductCard";
 import AddToCartButton from "@/components/AddToCartButton";
+import ShareButton from "@/components/ShareButton";
 import { CartCountProvider } from "@/components/CartCountProvider";
 import { buildStoreChrome, formatBRL } from "@/lib/store-chrome";
 import { getCurrentCustomer } from "@/lib/customer-auth";
@@ -151,19 +152,19 @@ export default async function ProductPage({
                   stock={product.stock}
                   isLoggedIn={!!customer}
                 />
-                <button className="sm:w-12 h-12 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all">
-                  <Share2 className="w-5 h-5" />
-                </button>
+                <ShareButton title={product.name} text={`Confira ${product.name} em ${store.name}!`} />
               </div>
 
-              <div className="mt-6 pt-5 border-t border-gray-100 space-y-2.5">
+              <div className="mt-6 pt-5 border-t border-gray-100 space-y-3">
                 {[
                   { icon: MessageCircle, text: "Frete: a combinar via WhatsApp" },
                   { icon: Shield, text: "Compra 100% segura — SSL" },
                   { icon: Check,  text: "Troca em até 7 dias" },
                 ].map(({ icon: Icon, text }) => (
-                  <div key={text} className="flex items-center gap-2.5 text-sm text-gray-600">
-                    <Icon className="w-4 h-4 flex-shrink-0" style={{ color: store.themeColor }} />
+                  <div key={text} className="flex items-center gap-3 text-sm text-gray-600">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${store.themeColor}10` }}>
+                      <Icon className="w-4 h-4" style={{ color: store.themeColor }} />
+                    </div>
                     {text}
                   </div>
                 ))}
@@ -172,16 +173,16 @@ export default async function ProductPage({
           </div>
 
           {product.description && (
-            <div className="mt-12 bg-gray-50 rounded-2xl p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Descrição</h2>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{product.description}</p>
+            <div className="mt-10 sm:mt-12 bg-gray-50/80 rounded-3xl p-5 sm:p-8">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">Descrição</h2>
+              <p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">{product.description}</p>
             </div>
           )}
 
           {related.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-xl font-bold text-gray-900 mb-5">Você também pode gostar</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="mt-10 sm:mt-12">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-5">Você também pode gostar</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5">
                 {related.map((p) => (
                   <ProductCard
                     key={p.id}
