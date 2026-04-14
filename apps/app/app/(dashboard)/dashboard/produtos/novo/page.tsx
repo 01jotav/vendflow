@@ -93,25 +93,50 @@ export default function NovoProdutoPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
               <h3 className="font-bold text-gray-900">Preço e estoque</h3>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Preço (R$) <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">R$</span>
-                  <input
-                    name="price"
-                    type="number"
-                    placeholder="0,00"
-                    step="0.01"
-                    min="0"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                  />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Preço atual <span className="text-red-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-medium">R$</span>
+                    <input
+                      name="price"
+                      type="number"
+                      placeholder="0,00"
+                      step="0.01"
+                      min="0"
+                      className="w-full pl-9 pr-3 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+                  {state.errors?.price && (
+                    <p className="text-xs text-red-500 mt-1">{state.errors.price[0]}</p>
+                  )}
                 </div>
-                {state.errors?.price && (
-                  <p className="text-xs text-red-500 mt-1">{state.errors.price[0]}</p>
-                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Preço antigo <span className="text-gray-400 font-normal">(opcional)</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-medium">R$</span>
+                    <input
+                      name="compareAtPrice"
+                      type="number"
+                      placeholder="0,00"
+                      step="0.01"
+                      min="0"
+                      className="w-full pl-9 pr-3 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    />
+                  </div>
+                  {state.errors?.compareAtPrice && (
+                    <p className="text-xs text-red-500 mt-1">{state.errors.compareAtPrice[0]}</p>
+                  )}
+                </div>
               </div>
+              <p className="text-xs text-gray-400 -mt-2">
+                O preço antigo aparecerá <span className="line-through">riscado</span> na loja para gerar ancoragem de valor e destacar o desconto.
+              </p>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Estoque</label>

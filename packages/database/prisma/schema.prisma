@@ -208,6 +208,7 @@ model Product {
   name        String
   description String?
   price       Float
+  compareAtPrice Float?
   stock       Int      @default(0)
   images      String[]
   active      Boolean  @default(true)

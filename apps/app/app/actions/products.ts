@@ -7,16 +7,23 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 const schema = z.object({
-  name:        z.string().min(2, "Nome obrigatório"),
-  description: z.string().optional(),
-  price:       z.coerce.number().min(0.01, "Preço inválido"),
-  stock:       z.coerce.number().int().min(0).default(0),
-  category:    z.string().optional(),
-  active:      z.string().transform((v) => v === "true"),
-});
+  name:            z.string().min(2, "Nome obrigatório"),
+  description:     z.string().optional(),
+  price:           z.coerce.number().min(0.01, "Preço inválido"),
+  compareAtPrice:  z.preprocess(
+    (v) => (v === "" || v === null || v === undefined ? undefined : v),
+    z.coerce.number().min(0.01, "Preço antigo inválido").optional()
+  ),
+  stock:           z.coerce.number().int().min(0).default(0),
+  category:        z.string().optional(),
+  active:          z.string().transform((v) => v === "true"),
+}).refine(
+  (d) => d.compareAtPrice === undefined || d.compareAtPrice > d.price,
+  { message: "Preço antigo deve ser maior que o preço atual", path: ["compareAtPrice"] }
+);
 
 export type ProductState = {
-  errors?: Partial<Record<"name" | "price" | "stock", string[]>>;
+  errors?: Partial<Record<"name" | "price" | "compareAtPrice" | "stock", string[]>>;
   message?: string;
 };
 
@@ -30,19 +37,20 @@ export async function createProductAction(
   const images = formData.getAll("images").map(String).filter(Boolean);
 
   const parsed = schema.safeParse({
-    name:        formData.get("name"),
-    description: formData.get("description") || undefined,
-    price:       formData.get("price"),
-    stock:       formData.get("stock") || "0",
-    category:    formData.get("category") || undefined,
-    active:      formData.get("active") ?? "true",
+    name:           formData.get("name"),
+    description:    formData.get("description") || undefined,
+    price:          formData.get("price"),
+    compareAtPrice: formData.get("compareAtPrice") || undefined,
+    stock:          formData.get("stock") || "0",
+    category:       formData.get("category") || undefined,
+    active:         formData.get("active") ?? "true",
   });
 
   if (!parsed.success) {
     return { errors: parsed.error.flatten().fieldErrors as ProductState["errors"] };
   }
 
-  const { name, description, price, stock, category, active } = parsed.data;
+  const { name, description, price, compareAtPrice, stock, category, active } = parsed.data;
 
   let categoryId: string | undefined;
   if (category) {
@@ -56,6 +64,7 @@ export async function createProductAction(
       name,
       description,
       price,
+      compareAtPrice: compareAtPrice ?? null,
       stock,
       active,
       images,
@@ -68,14 +77,7 @@ export async function createProductAction(
   redirect("/dashboard/produtos");
 }
 
-const editSchema = z.object({
-  name:        z.string().min(2, "Nome obrigatório"),
-  description: z.string().optional(),
-  price:       z.coerce.number().min(0.01, "Preço inválido"),
-  stock:       z.coerce.number().int().min(0).default(0),
-  category:    z.string().optional(),
-  active:      z.string().transform((v) => v === "true"),
-});
+const editSchema = schema;
 
 export async function editProductAction(
   id: string,
@@ -88,19 +90,20 @@ export async function editProductAction(
   const images = formData.getAll("images").map(String).filter(Boolean);
 
   const parsed = editSchema.safeParse({
-    name:        formData.get("name"),
-    description: formData.get("description") || undefined,
-    price:       formData.get("price"),
-    stock:       formData.get("stock") || "0",
-    category:    formData.get("category") || undefined,
-    active:      formData.get("active") ?? "true",
+    name:           formData.get("name"),
+    description:    formData.get("description") || undefined,
+    price:          formData.get("price"),
+    compareAtPrice: formData.get("compareAtPrice") || undefined,
+    stock:          formData.get("stock") || "0",
+    category:       formData.get("category") || undefined,
+    active:         formData.get("active") ?? "true",
   });
 
   if (!parsed.success) {
     return { errors: parsed.error.flatten().fieldErrors as ProductState["errors"] };
   }
 
-  const { name, description, price, stock, category, active } = parsed.data;
+  const { name, description, price, compareAtPrice, stock, category, active } = parsed.data;
 
   let categoryId: string | undefined | null = null;
   if (category) {
@@ -115,6 +118,7 @@ export async function editProductAction(
       name,
       description,
       price,
+      compareAtPrice: compareAtPrice ?? null,
       stock,
       active,
       images,
