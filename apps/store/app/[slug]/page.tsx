@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ShoppingBag, MessageCircle, Shield, RefreshCw } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
+import AnnouncementBar from "@/components/AnnouncementBar";
+import HeroSection from "@/components/HeroSection";
 import StorefrontGrid from "@/components/StorefrontGrid";
 import { buildStoreChrome } from "@/lib/store-chrome";
 import { getCurrentCustomer } from "@/lib/customer-auth";
@@ -33,12 +35,6 @@ export async function generateMetadata({
   }
 }
 
-const perks = [
-  { icon: MessageCircle, label: "Frete: a combinar via WhatsApp" },
-  { icon: Shield,    label: "Compra 100% segura" },
-  { icon: RefreshCw, label: "Troca em até 7 dias" },
-];
-
 export default async function StorePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
@@ -65,55 +61,31 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
   return (
     <>
-      <StoreHeader store={header} categories={categoryNames} cartCount={cartCount} isLoggedIn={!!customer} />
+      {/* 1 · AnnouncementBar (Lovable) */}
+      <AnnouncementBar themeColor={store.themeColor} />
+
+      {/* 2 · Header (Vendflow — engenharia preservada) */}
+      <StoreHeader
+        store={header}
+        categories={categoryNames}
+        cartCount={cartCount}
+        isLoggedIn={!!customer}
+      />
 
       <main className="pt-16">
-        <section
-          className="relative overflow-hidden py-14 sm:py-24"
-          style={{ background: `linear-gradient(160deg, ${store.themeColor}12 0%, ${store.themeColor}04 60%, transparent 100%)` }}
-        >
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-            <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold text-white mb-5 shadow-lg"
-              style={{ backgroundColor: store.themeColor, boxShadow: `0 4px 14px ${store.themeColor}40` }}
-            >
-              {"\u2728"} Bem-vindo(a)
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-              {store.name}
-            </h1>
-            {store.description && (
-              <p className="text-base sm:text-lg text-gray-500 max-w-xl mx-auto mb-8">{store.description}</p>
-            )}
-            <a
-              href="#produtos"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-white font-semibold text-sm shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-              style={{ backgroundColor: store.themeColor, boxShadow: `0 8px 24px ${store.themeColor}30` }}
-            >
-              <ShoppingBag className="w-4 h-4" />
-              Ver todos os produtos
-            </a>
-          </div>
-        </section>
+        {/* 3 · HeroSection (Lovable) */}
+        <HeroSection
+          storeName={store.name}
+          description={store.description}
+          themeColor={store.themeColor}
+          ctaHref="#produtos"
+        />
 
-        <section className="border-y border-gray-100 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-            <div className="flex items-center justify-center gap-6 sm:gap-10 overflow-x-auto">
-              {perks.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-2 shrink-0">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${store.themeColor}12` }}>
-                    <Icon className="w-3.5 h-3.5" style={{ color: store.themeColor }} />
-                  </div>
-                  <span className="text-xs sm:text-sm text-gray-600 font-medium whitespace-nowrap">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <div id="produtos">
+        {/* Espaçamento elegante entre Hero e Grid */}
+        <div id="produtos" className="py-8 sm:py-12">
+          {/* 4 · StorefrontGrid (Lovable + Vendflow) */}
           {store.products.length === 0 ? (
-            <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+            <section className="max-w-6xl mx-auto px-4 sm:px-6">
               <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                 <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
                   <ShoppingBag className="w-7 h-7 text-gray-300" />
@@ -130,7 +102,7 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
               themeColor={store.themeColor}
               isLoggedIn={!!customer}
               title="Destaques"
-              subtitle={`${store.products.length} ${store.products.length === 1 ? "produto disponível" : "produtos disponíveis"} com os melhores preços.`}
+              subtitle={`${store.products.length} ${store.products.length === 1 ? "produto disponível" : "produtos disponíveis"} selecionados com os melhores preços.`}
               products={store.products}
             />
           )}
