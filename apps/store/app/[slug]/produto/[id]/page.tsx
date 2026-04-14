@@ -129,6 +129,19 @@ export default async function ProductPage({
               <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">{product.name}</h1>
 
               <div className="mb-5">
+                {product.compareAtPrice && product.compareAtPrice > product.price && (
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-base text-gray-400 line-through">
+                      {formatBRL(product.compareAtPrice)}
+                    </span>
+                    <span
+                      className="text-xs font-bold text-white px-2 py-0.5 rounded-full"
+                      style={{ backgroundColor: store.themeColor }}
+                    >
+                      -{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%
+                    </span>
+                  </div>
+                )}
                 <p className="text-4xl font-extrabold" style={{ color: store.themeColor }}>
                   {formatBRL(product.price)}
                 </p>
@@ -189,6 +202,8 @@ export default async function ProductPage({
                     storeSlug={store.slug}
                     themeColor={store.themeColor}
                     product={p}
+                    isLoggedIn={!!customer}
+                    showSoldOut
                     sizes="(max-width: 640px) 50vw, 25vw"
                   />
                 ))}

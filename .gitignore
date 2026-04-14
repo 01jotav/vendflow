@@ -1,3 +1,6 @@
+# Lovable UI export (reference only — not part of build)
+lovable-export/
+
 # Dependencies
 node_modules
 .pnp

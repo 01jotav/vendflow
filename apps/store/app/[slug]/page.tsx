@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ShoppingBag, MessageCircle, Shield, RefreshCw } from "lucide-react";
 import StoreHeader from "@/components/layout/StoreHeader";
 import StoreFooter from "@/components/layout/StoreFooter";
-import ProductCard from "@/components/ProductCard";
+import StorefrontGrid from "@/components/StorefrontGrid";
 import { buildStoreChrome } from "@/lib/store-chrome";
 import { getCurrentCustomer } from "@/lib/customer-auth";
 import { getCartItemCount } from "@/lib/cart";
@@ -111,39 +111,30 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
           </div>
         </section>
 
-        <section id="produtos" className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Todos os produtos</h2>
-            <span className="text-xs sm:text-sm text-gray-400 bg-gray-100 px-3 py-1 rounded-full font-medium">
-              {store.products.length} {store.products.length === 1 ? "produto" : "produtos"}
-            </span>
-          </div>
-
+        <div id="produtos">
           {store.products.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-              <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
-                <ShoppingBag className="w-7 h-7 text-gray-300" />
+            <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+                  <ShoppingBag className="w-7 h-7 text-gray-300" />
+                </div>
+                <p className="text-base font-semibold text-gray-700 mb-1">Nenhum produto ainda</p>
+                <p className="text-sm text-gray-400 max-w-xs mx-auto">
+                  Esta loja está se preparando. Volte em breve para conferir as novidades!
+                </p>
               </div>
-              <p className="text-base font-semibold text-gray-700 mb-1">Nenhum produto ainda</p>
-              <p className="text-sm text-gray-400 max-w-xs mx-auto">
-                Esta loja está se preparando. Volte em breve para conferir as novidades!
-              </p>
-            </div>
+            </section>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-              {store.products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  storeSlug={store.slug}
-                  themeColor={store.themeColor}
-                  product={product}
-                  showCategory
-                  showSoldOut
-                />
-              ))}
-            </div>
+            <StorefrontGrid
+              storeSlug={store.slug}
+              themeColor={store.themeColor}
+              isLoggedIn={!!customer}
+              title="Destaques"
+              subtitle={`${store.products.length} ${store.products.length === 1 ? "produto disponível" : "produtos disponíveis"} com os melhores preços.`}
+              products={store.products}
+            />
           )}
-        </section>
+        </div>
       </main>
 
       <StoreFooter store={footer} />
